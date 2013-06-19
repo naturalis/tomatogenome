@@ -95,7 +95,7 @@ for ID in $IDS; do
 		# build a consensus by concatenating all the FASTA data and picking
 		# the best supported base at each site, then fetch the nearest annotated
 		# CDS from GenBank
-		#$CONSENSE -f $FASTALIST -q $QUALLIST | $FETCHCODING -r $REFTAXON > $FASTA
+		$CONSENSE -f $FASTALIST -q $QUALLIST | $FETCHCODING -r $REFTAXON > $FASTA
 		
 		# build a codon alignment
 		cd $BIN && $MACSE -i $FASTA -o $ALN && cd -
