@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # variables
-GENES=Solyc02g085500.2,Solyc09g010080.2,Solyc09g018220.1.1,Solyc10g083290,Solyc09g010090,Solyc10g083300,\
-Solyc06g008300,Solyc01g009690.1.1,Solyc01g006550.2.1,Solyc03g082780.1.1,Solyc05g013300,Solyc07g053630.2.1,Solyc10g008160.2.1
+GENES=gene:Solyc02g085500.2,gene:Solyc09g010080.2,gene:Solyc09g018220.1,gene:Solyc10g083290.1,\
+gene:Solyc09g010090.2,gene:Solyc10g083300.1,gene:Solyc06g008300.2,gene:Solyc01g009690.1,\
+gene:Solyc01g006550.2,gene:Solyc03g082780.1,gene:Solyc05g013300.1,gene:Solyc07g053630.2,\
+gene:Solyc10g008160.2
 # Solyc07g053630.2.1 = golden 1-like TF
 # Solyc10g008160.2.1 = golden 2-like TF
 # Solyc02g085500.2   = vorm van vrucht (rond of peervormig)
@@ -39,11 +41,5 @@ MAPS=$READS/Sample_${U1}/${U1}_GTGGCC_${MAP},$READS/Sample_${WAG}/${WAG}_CGTACG_
 # output goes here
 WORKDIR=doc/circos
 
-perl script/make_circos_tracks.pl --verbose \
-	--gff3=$GFF3 \
-	--mapdamage=$MAPS \
-	--workdir=$WORKDIR \
-	--refseq=$REF \
-	--genes=$GENES \
-	--bams=$BAMS
-
+ARGS="-gff3 $GFF3 -m $MAPS -w $WORKDIR -ref $REF -genes $GENES -b $BAMS --verbose"
+perl script/make_circos_tracks.pl $ARGS
