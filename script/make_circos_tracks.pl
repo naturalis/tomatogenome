@@ -28,14 +28,15 @@ sub read_gff3 {
 	my %lookup = map { $_ => 1 } @genes;
 
 	# start reading the file
-	$Log->info("going to read chromosome data from $gff3");
+	$Log->info("going to read gene locations from $gff3");
+	$Log->info("genes: \n" . join("\n",@genes));
 	open my $fh, '<', $gff3 or die $!;
 	while(<$fh>) {
 		chomp;
 		my @record = split;
 
 		# capture the locus id from the description column
-		if ( $record[$desc] =~ m/ID=([^;]+)/ ) {
+		if ( $record[$desc] and $record[$desc] =~ m/ID=([^;]+)/ ) {
 			my $id = $1;
 
 			# found a locus of interest, store the location
@@ -46,7 +47,7 @@ sub read_gff3 {
 					'end'   => $record[$end],
 					'chr'   => $record[$chr],
 				};
-				$Log->info(sprintf('found %s at %s:$i-$i',$id,@record[$chr,$start,$end]));
+				$Log->info(sprintf('found %s at %s:%i-%i',$id,@record[$chr,$start,$end]));
 			}
 		}
 	}
@@ -58,10 +59,12 @@ sub read_gff3 {
 # validates a command line argument
 sub check_arg {
 	my %args = @_; # name, value, file, list, dir
+	use Data::Dumper;
+	warn Dumper(\%args);
 
 	# is there a value?
 	if ( not $args{'value'} ) {
-		die "Need -$args{name} <value> argument\n";
+		warn "Need -$args{'name'} <value> argument\n";
 	}
 
 	# split if need be
@@ -70,10 +73,10 @@ sub check_arg {
 	# check files and directories
 	for my $v ( @value ) {
 		if ( $args{'file'} and not -f $v ) {
-			die "Need -$args{name} <file1,file2> argument\n";
+			warn "Need -$args{name} <file1,file2> argument\n";
 		}
 		if ( $args{'dir'} and not -d $v ) {
-			die "Need -$args{dir} <dir1,dir2> argument\n";
+			warn "Need -$args{dir} <dir1,dir2> argument\n";
 		}
 	}
 	return @value;
@@ -91,7 +94,7 @@ sub check_args {
 	my $mapdamage;        # output tables from mapDamage
 	my $genes;            # gene identifiers in GFF3
 	my $bams;             # BAM files to compute coverage
-	my $size = 10000;     # bin size for cover
+	my $size = 100000;    # bin size for cover
 	my $readwindow = 10;  # window size for misincorporation
 	GetOptions(
 		'verbose+'     => \$verbosity,
@@ -106,13 +109,15 @@ sub check_args {
 	);
 
 	# instantiate logger
-	my $Log = Bio::Phylo::Util::Logger->new(
+	$Log = Bio::Phylo::Util::Logger->new(
 		'-level' => $verbosity,
 		'-class' => 'main',
 	);
 
+=begin pod
+
 	# check individual arguments
-	check_arg( 'name' => 'gff3',    'value' => $gff3 );
+	check_arg( 'name' => 'gff3', 'value' => $gff3 );
         check_arg( 'name' => 'refseq',  'value' => $refseq, 'file' => 1 );
 	check_arg( 'name' => 'workdir', 'value' => $workdir, 'dir' => 1 );
 
@@ -130,6 +135,11 @@ sub check_args {
 		'file'  => 1,
 		'list'  => 1,
 	);
+=cut
+
+my @genes = split /,/, $genes;
+my @mapdamage = split /,/, $mapdamage;
+my @bams = split /,/, $bams;
 
 	# done
 	return 
@@ -204,7 +214,7 @@ sub write_labels {
 # out as binned over as many elements as there are in the arrays.
 sub write_continuous_track {
 	my ( $outfile, $data, $size, @chr ) = @_;
-	$Log->info("goint to write continuous data track to $outfile");
+	$Log->info("going to write continuous data track to $outfile");
 	open my $fh, '>', $outfile or die $!;
 	for my $c ( @chr ) {
 		my $chromo = $c->[0];
@@ -224,7 +234,7 @@ sub read_coverage {
 	my %result;
 
 	# this is going to create a lot of data, so we will pass by reference
-	open my $fh, "samtools mpileup --BQ0 -d10000000 -f $refseq $bam |" or die "Can't run samtools: $!";
+	open my $fh, "samtools mpileup -BQ0 -d10000000 -f $refseq $bam |" or die "Can't run samtools: $!";
 	my @window;
 	my $current;
 	while(<$fh>) {
@@ -250,6 +260,7 @@ sub read_coverage {
 		if ( $size == scalar @window ) {
 			push @{ $result{$current} }, sum(@window)/$size;
 			@window = ();
+			$Log->info("done window ".scalar(@{ $result{$current} }));
 		}
 		
 	}
@@ -265,13 +276,13 @@ sub read_mapdamage {
 	$Log->info("going to read mapDamage results in dir '$dir'");
 	opendir my $dh, $dir or die "Can't open dir handle: $!";
 	while( my $entry = readdir $dh ) {
-		if ( $entry =~ m/dna_Frag_(.+?)_(\d+)_(\d+)\.txt/ ) {
+		if ( $entry =~ m/dnaFrag_(.+?)_(\d+?)_(\d+?)\.txt/ ) {
 			my ( $chromo, $around, $length ) = ( $1, $2, $3 );
-			$fragmentation{$chromo} = read_fragmentation( "$dir/$entry", $around, $length );
+			$fragmentation{$chromo} = [ read_fragmentation( "$dir/$entry", $around, $length ) ];
 		}
 		elsif ( $entry =~ m/nuclComp_(.+?)\.txt/ ) {
 			my $chromo = $1;
-			$misincorporation{$chromo} = read_misincorporation( "$dir/$entry", $readwindow );
+			$misincorporation{$chromo} = [ read_misincorporation( "$dir/$entry", $readwindow ) ];
 		}
 	}
 	return \%fragmentation, \%misincorporation;
@@ -398,9 +409,12 @@ LABELS
 
 	# read coverage, write 2d tracks
 	my $radius = 0.9;
+
+=begin pod
+
 	for my $i ( 0 .. $#{ $args{'bams'} } ) {
 		my $bam = $args{'bams'}->[$i];
-		my $coverage = read_coverage( $bam, $args{qw'refseq size'} ); # returns hash ref
+		my $coverage = read_coverage( $bam, @args{qw[refseq size]} ); # returns hash ref
 		my $coverfile = $args{'workdir'} . "/coverage${i}.txt";
 		write_continuous_track( $coverfile, $coverage, $args{'size'}, @chromosomes );
 		$radius -= 0.1;
@@ -415,7 +429,10 @@ LABELS
 	stroke_color     = black
 </plot>
 COVERAGE
+
 	}
+
+=cut
 
 	# read mapdamage tables, write 2d tracks
 	my %radius = (
@@ -452,7 +469,7 @@ COVERAGE
 FRAGMENTATION
 
 		# write misincorporation track
-		my $mis_file = $args{'workdir'} . "/misincorporation${$i}.txt";
+		my $mis_file = $args{'workdir'} . "/misincorporation${i}.txt";
 		write_continuous_track( $mis_file, $misincorporation, $args{'size'}, @chromosomes );
 		print $fh <<"MISINCORPORATION";
 <plot>
@@ -476,5 +493,7 @@ MISINCORPORATION
 
 	}
 
+	# print footer
+	print $fh "</plots>\n";
 }
 main();
