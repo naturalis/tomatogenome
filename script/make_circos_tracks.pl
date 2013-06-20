@@ -46,7 +46,7 @@ sub read_gff3 {
 					'end'   => $record[$end],
 					'chr'   => $record[$chr],
 				};
-				$Log->info("sprintf('found %s at %s:$i-$i',$id,@record[$chr,$start,$end]));
+				$Log->info(sprintf('found %s at %s:$i-$i',$id,@record[$chr,$start,$end]));
 			}
 		}
 	}
@@ -70,7 +70,7 @@ sub check_arg {
 	# check files and directories
 	for my $v ( @value ) {
 		if ( $args{'file'} and not -f $v ) {
-			die "Need -$args{name} <file1,$file2> argument\n";
+			die "Need -$args{name} <file1,file2> argument\n";
 		}
 		if ( $args{'dir'} and not -d $v ) {
 			die "Need -$args{dir} <dir1,dir2> argument\n";
@@ -189,7 +189,7 @@ sub read_fasta {
 # writes a label track to the provided file name using
 # the output as formatted by read_gff3
 sub write_labels {
-	my $outfile, @locations = @_;
+	my ( $outfile, @locations ) = @_;
 	$Log->info("going to write label track to $outfile");
 	open my $fh, '>', $outfile or die $!;
 	for my $l ( @locations ) {
@@ -422,9 +422,9 @@ COVERAGE
 		'frag' => $radius,
 		'mis'  => $radius - 0.1 * scalar(@{ $args{'mapdamage'} }),
 	);
-	for my $i ( 0 .. $#{ $args{'mapdamage'} ) {
+	for my $i ( 0 .. $#{ $args{'mapdamage'} } ) {
 		my $md = $args{'mapdamage'}->[$i];
-		my ( $fragmentation, $misincorporation ) = read_mapdamage($md, $args{'readwindow'}));
+		my ( $fragmentation, $misincorporation ) = read_mapdamage($md, $args{'readwindow'});
 		$radius{'frag'} -= 0.1;
 		$radius{'mis'} -= 0.1;		
 
@@ -472,8 +472,7 @@ FRAGMENTATION
                 </axis>
         </axes>
 </plot>
-
-MISINCORPORATION 
+MISINCORPORATION
 
 	}
 
