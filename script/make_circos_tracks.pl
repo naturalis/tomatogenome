@@ -8,6 +8,58 @@ use Bio::Phylo::Util::Logger ':levels';
 # global variables
 my $Log; # logger
 
+# process and validate all command line arguments
+sub check_args {
+
+	# process command line arguments
+	my $gff3;             # gff3 file
+	my $workdir;          # working directory
+	my $refseq;           # reference genome in FASTA format
+	my $verbosity = WARN; # default logging level
+	my $mapdamage;        # output tables from mapDamage
+	my $genes;            # gene identifiers in GFF3
+	my $bams;             # BAM files to compute coverage
+	my $size = 1_000_000; # bin size for cover
+	my $readwindow = 10;  # window size for misincorporation
+	my $increment = 0.05; # radius increments for circos
+	GetOptions(
+		'verbose+'     => \$verbosity,
+		'gff3=s'       => \$gff3,
+		'mapdamage=s'  => \$mapdamage,
+		'workdir=s'    => \$workdir,
+		'refseq=s'     => \$refseq,
+		'genes=s'      => \$genes,
+		'bams=s'       => \$bams,
+		'size=i'       => \$size,
+		'readwindow=i' => \$readwindow,
+		'increment=f'  => \$increment,
+	);
+
+	# instantiate logger
+	$Log = Bio::Phylo::Util::Logger->new(
+		'-level' => $verbosity,
+		'-class' => 'main',
+	);
+
+	# split arguments that are comma-separated lists, filter
+	# out all null values
+	my @genes     = grep { /\S/ } split /,/, $genes;
+	my @mapdamage = grep { /\S/ } split /,/, $mapdamage;
+	my @bams      = grep { /\S/ } split /,/, $bams;
+
+	# done
+	return 
+		'gff3'       => $gff3,
+		'workdir'    => $workdir,
+		'mapdamage'  => \@mapdamage,
+		'refseq'     => $refseq,
+		'genes'      => \@genes,
+		'bams'       => \@bams,
+		'size'       => $size,
+		'readwindow' => $readwindow,
+		'increment'  => $increment;
+}
+
 # scans a GFF3 file for one or more locus identifiers 
 # (i.e. whatever value is associated with the ID=... key
 # in the description column). returns a list of hashes
@@ -56,121 +108,6 @@ sub read_gff3 {
 	return @result;
 }
 
-# validates a command line argument
-sub check_arg {
-	my %args = @_; # name, value, file, list, dir
-	use Data::Dumper;
-	warn Dumper(\%args);
-
-	# is there a value?
-	if ( not $args{'value'} ) {
-		warn "Need -$args{'name'} <value> argument\n";
-	}
-
-	# split if need be
-	my @value = $args{'list'} ? grep { /\S/ } split /,/, $args{'value'} : ( $args{'value'} );
-
-	# check files and directories
-	for my $v ( @value ) {
-		if ( $args{'file'} and not -f $v ) {
-			warn "Need -$args{name} <file1,file2> argument\n";
-		}
-		if ( $args{'dir'} and not -d $v ) {
-			warn "Need -$args{dir} <dir1,dir2> argument\n";
-		}
-	}
-	return @value;
-
-}
-
-# process and validate all command line arguments
-sub check_args {
-
-	# process command line arguments
-	my $gff3;             # gff3 file
-	my $workdir;          # working directory
-	my $refseq;           # reference genome in FASTA format
-	my $verbosity = WARN; # default logging level
-	my $mapdamage;        # output tables from mapDamage
-	my $genes;            # gene identifiers in GFF3
-	my $bams;             # BAM files to compute coverage
-	my $size = 100000;    # bin size for cover
-	my $readwindow = 10;  # window size for misincorporation
-	GetOptions(
-		'verbose+'     => \$verbosity,
-		'gff3=s'       => \$gff3,
-		'mapdamage=s'  => \$mapdamage,
-		'workdir=s'    => \$workdir,
-		'refseq=s'     => \$refseq,
-		'genes=s'      => \$genes,
-		'bams=s'       => \$bams,
-		'size=i'       => \$size,
-		'readwindow=i' => \$readwindow,
-	);
-
-	# instantiate logger
-	$Log = Bio::Phylo::Util::Logger->new(
-		'-level' => $verbosity,
-		'-class' => 'main',
-	);
-
-=begin pod
-
-	# check individual arguments
-	check_arg( 'name' => 'gff3', 'value' => $gff3 );
-        check_arg( 'name' => 'refseq',  'value' => $refseq, 'file' => 1 );
-	check_arg( 'name' => 'workdir', 'value' => $workdir, 'dir' => 1 );
-
-	# check and expand lists
-	my @genes = check_arg( 'name' => 'genes', 'value' => $genes, 'list' => 1 );
-	my @mapdamage = check_arg( 
-		'name'  => 'mapdamage', 
-		'value' => $mapdamage, 
-		'dir'   => 1, 
-		'list'  => 1 
-	);
-	my @bams = check_args(
-		'name'  => 'bams',
-		'value' => $bams,
-		'file'  => 1,
-		'list'  => 1,
-	);
-=cut
-
-my @genes = split /,/, $genes;
-my @mapdamage = split /,/, $mapdamage;
-my @bams = split /,/, $bams;
-
-	# done
-	return 
-		'gff3'       => $gff3,
-		'workdir'    => $workdir,
-		'mapdamage'  => \@mapdamage,
-		'refseq'     => $refseq,
-		'genes'      => \@genes,
-		'bams'       => \@bams,
-		'size'       => $size,
-		'readwindow' => $readwindow;
-}
-
-# write a circos karyotype track to a provided file name. 
-# second argument is a list of array refs where each array
-# ref's first elt is the chromosome label, the second the
-# length of the chromosome ( [ chr1, 213127 ], [ chr2, 72346 ] );
-sub write_karyotype {
-	my ( $karyotype, @chr ) = @_;
-
-	# open file handle
-	$Log->info("going to write karyotype to $karyotype");
-	open my $fh, '>', $karyotype or die $!;
-
-	# iterate over chromosomes
-	for my $i ( 0 .. $#chr ) {
-		my ( $label, $end ) = @{ $chr[$i] };
-		printf $fh "chr - %s %s 0 %i chr%i\n", $label, $label, $end, $i + 1;
-	}
-}
-
 # reads a fasta file, returns a list as required by the input
 # for write_karyotype
 sub read_fasta {
@@ -196,44 +133,13 @@ sub read_fasta {
 	return map { [ $_ => $length{$_} ] } @result;
 }
 
-# writes a label track to the provided file name using
-# the output as formatted by read_gff3
-sub write_labels {
-	my ( $outfile, @locations ) = @_;
-	$Log->info("going to write label track to $outfile");
-	open my $fh, '>', $outfile or die $!;
-	for my $l ( @locations ) {
-		my %location = %{ $l }; 
-		printf $fh "%s %i %i %s\n", @location{qw(chr start end gene)};
-	}
-}
-
-# writes a continuous-valued 2d track to the provided file name. the
-# data to be written is a hash reference whose keys are chromosome names
-# and values are array references with the raw data. the data is written
-# out as binned over as many elements as there are in the arrays.
-sub write_continuous_track {
-	my ( $outfile, $data, $size, @chr ) = @_;
-	$Log->info("going to write continuous data track to $outfile");
-	open my $fh, '>', $outfile or die $!;
-	for my $c ( @chr ) {
-		my $chromo = $c->[0];
-		for my $i ( 0 .. $#{ $data->{$chromo} } ) {
-			my $start = $i * $size;
-			my $end   = ( $start + $size ) < $c->[1] ? $start + $size : $c->[1];
-			my $value = $data->{$chromo}->[$i];
-			printf $fh "%s %i %i %f\n", $chromo, $start, $end, $value; 
-		}
-	}
-}
-
 # reads the coverage in a BAM file, averages this in bins of $size for each chromosome
 sub read_coverage {
 	my ( $bam, $refseq, $size ) = @_;
 	$Log->info("going to read sliding window (size: $size) coverage from BAM file $bam");
 	my %result;
 
-	# this is going to create a lot of data, so we will pass by reference
+	# this is going to create a lot of data, so we will return by reference
 	open my $fh, "samtools mpileup -BQ0 -d10000000 -f $refseq $bam |" or die "Can't run samtools: $!";
 	my @window;
 	my $current;
@@ -246,8 +152,11 @@ sub read_coverage {
 		if ( not $result{$chr} ) {
 
 			# finish the previous one
-			push @{ $result{$current} }, sum(@window)/scalar(@window) if $current;
-			@window = ();
+			if ( $current ) {
+				push @{ $result{$current} }, sum(@window)/scalar(@window);
+				@window = ();
+				$Log->info("finishing $current window ".scalar(@{ $result{$current} }));
+			}
 
 			# initialize the new one
 			$result{$chr} = [];
@@ -260,26 +169,31 @@ sub read_coverage {
 		if ( $size == scalar @window ) {
 			push @{ $result{$current} }, sum(@window)/$size;
 			@window = ();
-			$Log->info("done window ".scalar(@{ $result{$current} }));
+			$Log->info("done $current window ".scalar(@{ $result{$current} }));
 		}
 		
 	}
 	return \%result;
 }
 
-# reads mapDamages fragmentation and misincorporation results, returns these
+# reads mapDamage fragmentation and misincorporation results, returns these
 # per chromosome
 sub read_mapdamage {
 	my ( $dir, $readwindow ) = @_;
 	my ( %fragmentation, %misincorporation );
 
+	# read from directory with all mapDamage output
 	$Log->info("going to read mapDamage results in dir '$dir'");
 	opendir my $dh, $dir or die "Can't open dir handle: $!";
 	while( my $entry = readdir $dh ) {
+	
+		# tabular data with DNA fragmentation
 		if ( $entry =~ m/dnaFrag_(.+?)_(\d+?)_(\d+?)\.txt/ ) {
 			my ( $chromo, $around, $length ) = ( $1, $2, $3 );
 			$fragmentation{$chromo} = [ read_fragmentation( "$dir/$entry", $around, $length ) ];
 		}
+		
+		# tabular data with inferred misincorporations
 		elsif ( $entry =~ m/nuclComp_(.+?)\.txt/ ) {
 			my $chromo = $1;
 			$misincorporation{$chromo} = [ read_misincorporation( "$dir/$entry", $readwindow ) ];
@@ -344,20 +258,72 @@ sub read_fragmentation {
 	return $totPurines / $totTot;
 }
 
-sub main {
-	my %args = check_args();
+# write a circos karyotype track to a provided file name. 
+# second argument is a list of array refs where each array
+# ref's first elt is the chromosome label, the second the
+# length of the chromosome ( [ chr1, 213127 ], [ chr2, 72346 ] );
+sub write_karyotype {
+	my ( $karyotype, @chr ) = @_;
 
-	# read karyotype from FASTA, write to karyotype file
-	my @chromosomes = read_fasta( $args{'refseq'} );
-	my $karyotype = $args{'workdir'} . '/karyotype.txt';
-	write_karyotype( $karyotype, @chromosomes );
+	# open file handle
+	$Log->info("going to write karyotype to $karyotype");
+	open my $fh, '>', $karyotype or die $!;
 
-        # write circos config file
-        my $circos_conf = $args{'workdir'} . '/circos.conf';
-        open my $fh, '>', $circos_conf or die $!;
+	# iterate over chromosomes
+	for my $i ( 0 .. $#chr ) {
+		my ( $label, $end ) = @{ $chr[$i] };
+		printf $fh "chr - %s %s 0 %i chr%i\n", $label, $label, $end, $i + 1;
+	}
+}
+
+# writes a label track to the provided file name using
+# the output data structure returned by read_gff3
+sub write_labels {
+	my ( $outfile, @locations ) = @_;
+	$Log->info("going to write label track to $outfile");
+	open my $fh, '>', $outfile or die $!;
+	for my $l ( @locations ) {
+		my %location = %{ $l }; 
+		printf $fh "%s %i %i %s\n", @location{qw(chr start end gene)};
+	}
+}
+
+# writes a continuous-valued 2d track to the provided file name. the
+# data to be written is a hash reference whose keys are chromosome names
+# and values are array references with the raw data. the data is written
+# out as binned over as many elements as there are in the arrays.
+sub write_continuous_track {
+	my ( $outfile, $data, $size, @chr ) = @_;
+	
+	# open file handle
+	$Log->info("going to write continuous data track (bin size: $size) to $outfile");
+	open my $fh, '>', $outfile or die $!;
+	
+	# iterate over chromosome data structure as returned by read_fasta
+	for my $c ( @chr ) {
+		my $chromo  = $c->[0]; # i.e., chromosome name, such as "SL2.40ch00"
+		my $chrsize = $c->[1]; # chromosome size (in bp, from ref genome)
+		
+		# iterate over data bins for this chromosome
+		for my $i ( 0 .. $#{ $data->{$chromo} } ) {
+			my $start = $i * $size;
+			my $end   = ( $start + $size ) < $chrsize ? $start + $size : $chrsize;
+			my $value = $data->{$chromo}->[$i];
+			printf $fh "%s %i %i %f\n", $chromo, $start, $end, $value; 
+		}
+	}
+}
+
+# the write_circos_* subroutines populate a circos.conf file with
+# karyotype, label, heatmap and histogram tracks. they contain 
+# hardcoded circos config language, which should be made as 
+# tweakable as need be.
+sub write_circos_header {
+	my ( $circos_conf, $karyotype ) = @_;
+	open my $fh, '>', $circos_conf or die $!;
 
 	# write header
-        print $fh <<"HEADER";
+	print $fh <<"HEADER";
 <colors>
 	<<include etc/colors.conf>>
 </colors>
@@ -381,10 +347,11 @@ karyotype = $karyotype
 <plots>
 HEADER
 
-        # read gene locations, write to labels file
-        my @locations = read_gff3( $args{'gff3'}, @{ $args{'genes'} } );
-	my $labels = $args{'workdir'} . '/labels.txt';
-	write_labels( $labels, @locations );
+	return $fh;
+}
+
+sub write_circos_label_config {
+	my ( $fh, $labels ) = @_;
 	print $fh <<"LABELS";
 
 <plot>
@@ -406,54 +373,31 @@ HEADER
 	rpadding = 0p
 </plot>
 LABELS
+}
 
-	# read coverage, write 2d tracks
-	my $radius = 0.9;
-
-=begin pod
-
-	for my $i ( 0 .. $#{ $args{'bams'} } ) {
-		my $bam = $args{'bams'}->[$i];
-		my $coverage = read_coverage( $bam, @args{qw[refseq size]} ); # returns hash ref
-		my $coverfile = $args{'workdir'} . "/coverage${i}.txt";
-		write_continuous_track( $coverfile, $coverage, $args{'size'}, @chromosomes );
-		$radius -= 0.1;
-		print $fh <<"COVERAGE";
+sub write_circos_heatmap_config {
+	my ( $fh, $datafile, $radius ) = @_;
+		print $fh <<"HEATMAP";
 <plot>
 	type    = heatmap
-	file    = $coverfile
+	file    = $datafile
 	color   = spectral-11-div
 	r0      = ${radius}r
 	r1      = ${radius}r+25p
 	stroke_thickness = 1
 	stroke_color     = black
 </plot>
-COVERAGE
+HEATMAP
+}
 
-	}
-
-=cut
-
-	# read mapdamage tables, write 2d tracks
-	my %radius = (
-		'frag' => $radius,
-		'mis'  => $radius - 0.1 * scalar(@{ $args{'mapdamage'} }),
-	);
-	for my $i ( 0 .. $#{ $args{'mapdamage'} } ) {
-		my $md = $args{'mapdamage'}->[$i];
-		my ( $fragmentation, $misincorporation ) = read_mapdamage($md, $args{'readwindow'});
-		$radius{'frag'} -= 0.1;
-		$radius{'mis'} -= 0.1;		
-
-		# write fragmentation track
-		my $frag_file = $args{'workdir'} . "/fragmentation${i}.txt";
-		write_continuous_track( $frag_file, $fragmentation, $args{'size'}, @chromosomes );
-		print $fh <<"FRAGMENTATION";
+sub write_circos_histogram_config {
+	my ( $fh, $datafile, $radius ) = @_;
+		print $fh <<"HISTOGRAM";
 <plot>
 	type      = histogram
-	file      = $frag_file
-	r1        = $radius{'frag'}r+25p
-	r0        = $radius{'frag'}r
+	file      = $datafile
+	r1        = ${radius}r+25p
+	r0        = ${radius}r
 	stroke_type = outline
 	thickness   = 1
 	color       = black
@@ -466,31 +410,68 @@ COVERAGE
 		</axis>
 	</axes>
 </plot>
-FRAGMENTATION
+HISTOGRAM
+}
+
+sub main {
+	my %args = check_args();
+
+	# read karyotype from FASTA, write to karyotype file
+	my @chromosomes = read_fasta( $args{'refseq'} );
+	my $karyotype = $args{'workdir'} . '/karyotype.txt';
+	write_karyotype( $karyotype, @chromosomes );
+
+	# initialize circos config file
+	my $circos_conf = $args{'workdir'} . '/circos.conf';
+	my $fh = write_circos_header( $circos_conf, $karyotype );
+
+    # read gene locations, write to labels file, expand config file
+    my @locations = read_gff3( $args{'gff3'}, @{ $args{'genes'} } );
+	my $labels = $args{'workdir'} . '/labels.txt';
+	write_labels( $labels, @locations );
+	write_circos_label_config( $fh, $labels );
+	
+	# these govern the radius of the outermost data track and the
+	# decrements going from outermost to innermost
+	my $radius = 1 - $args{'increment'};
+	my $inc    = $args{'increment'};	
+
+	# read coverage, write heatmap tracks
+	for my $i ( 0 .. $#{ $args{'bams'} } ) {
+	
+		# read coverage for BAM file $i
+		my $bam = $args{'bams'}->[$i];
+		my $coverage = read_coverage( $bam, @args{qw[refseq size]} ); # returns hash ref
+		
+		# write data file
+		my $coverfile = $args{'workdir'} . "/coverage${i}.txt";
+		write_continuous_track( $coverfile, $coverage, $args{'size'}, @chromosomes );
+		
+		# write config
+		$radius -= $inc;
+		write_circos_heatmap_config( $fh, $coverfile, $radius );
+	}
+
+	# read mapdamage tables, write histogram tracks
+	my %radius = (
+		'frag' => $radius,
+		'mis'  => $radius - $inc * scalar @{ $args{'mapdamage'} },
+	);
+	for my $i ( 0 .. $#{ $args{'mapdamage'} } ) {
+		my $md = $args{'mapdamage'}->[$i];
+		my ( $frag_data, $mis_data ) = read_mapdamage($md, $args{'readwindow'});
+		$radius{'frag'} -= $inc;
+		$radius{'mis'}  -= $inc;		
+
+		# write fragmentation track
+		my $frag_file = $args{'workdir'} . "/fragmentation${i}.txt";
+		write_continuous_track( $frag_file, $frag_data, $args{'size'}, @chromosomes );
+		write_circos_histogram_config( $fh, $frag_file, $radius{'frag'} );
 
 		# write misincorporation track
 		my $mis_file = $args{'workdir'} . "/misincorporation${i}.txt";
-		write_continuous_track( $mis_file, $misincorporation, $args{'size'}, @chromosomes );
-		print $fh <<"MISINCORPORATION";
-<plot>
-        type      = histogram
-        file      = $mis_file
-        r1        = $radius{'mis'}r+25p
-        r0        = $radius{'mis'}r
-        stroke_type = outline
-        thickness   = 1
-        color       = black
-        extend_bin  = yes
-        <axes>
-                <axis>
-                        spacing   = 5p
-                        color     = lgrey
-                        thickness = 1
-                </axis>
-        </axes>
-</plot>
-MISINCORPORATION
-
+		write_continuous_track( $mis_file, $mis_data, $args{'size'}, @chromosomes );
+		write_circos_histogram_config( $fh, $mis_file, $radius{'mis'} );		
 	}
 
 	# print footer
