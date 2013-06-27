@@ -5,8 +5,9 @@
 
 # variables
 # IDS="Solyc02g085500.2 Solyc09g010080.2 Solyc09g018220.1.1 Solyc10g083290 Solyc09g010090 Solyc10g083300 Solyc06g008300 Solyc01g009690.1.1 Solyc01g006550.2.1 Solyc03g082780.1.1 Solyc05g013300"
-#IDS="Solyc07g053630.2.1" 
-IDS="Solyc10g008160.2.1"
+# IDS="Solyc07g053630.2.1" 
+# IDS="Solyc10g008160.2.1"
+INTERVALS="SL2.40ch10:2292142-2295825"
 # Solyc07g053630.2.1 = golden 1-like TF
 # Solyc10g008160.2.1 = golden 2-like TF
 # Solyc02g085500.2   = vorm van vrucht (rond of peervormig)
@@ -106,6 +107,51 @@ for ID in $IDS; do
 	
 	# run phyml, convert to nexus
 	NEXUS=$WORKDIR/$ID.nex
+	if [ ! -f $NEXUS ]; then
+		$PHYML -i $PHYLIP
+		$MERGE -t $PHYLIP$PHYMLTREE -a $PHYLIP > $NEXUS
+	fi	
+done
+
+# process intervals
+for INTERVAL in $INTERVALS; do
+
+	# make safe file path
+	SAFE=`echo $INTERVAL | sed -e 's/:/_/'`
+	
+	# create directory for all intermediate files for focal interval
+	WORKDIR=$CANDIDATES/$SAFE
+	if [ ! -d $WORKDIR ]; then
+		mkdir $WORKDIR
+	fi	
+	
+	# extract consensus seq and quality scores for interval
+	FASTA=$WORKDIR/$SAFE.fa
+	QUAL=$WORKDIR/$SAFE.qual
+	if [ ! -f $FASTA ]; then
+		$EXTRACT -interval $INTERVAL -bam $BAMLIST -ref $REF -o $FASTA -q $QUAL
+	fi
+	
+	# concatenate, consense, align, convert to phylip
+	GBFASTA=$WORKDIR/$SAFE.gb.fa
+	ALN=$WORKDIR/$SAFE.aln
+	PHYLIP=$WORKDIR/$SAFE.phy
+	if [ ! -f $ALN ]; then
+	
+		# build a consensus by concatenating all the FASTA data and picking
+		# the best supported base at each site, then fetch the nearest annotated
+		# CDS from GenBank
+		$CONSENSE -f $FASTA -q $QUAL | $FETCHCODING -r $REFTAXON > $GBFASTA
+		
+		# build a codon alignment
+		cd $BIN && $MACSE -i $GBFASTA -o $ALN && cd -
+		
+		# convert to PHYLIP, strip stop codons
+		cat $ALN | $FASTA2PHYLIP > $PHYLIP
+	fi	
+
+	# run phyml, convert to nexus
+	NEXUS=$WORKDIR/$SAFE.nex
 	if [ ! -f $NEXUS ]; then
 		$PHYML -i $PHYLIP
 		$MERGE -t $PHYLIP$PHYMLTREE -a $PHYLIP > $NEXUS
