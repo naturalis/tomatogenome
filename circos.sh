@@ -35,11 +35,14 @@ WAG=5-WAG0463703
 U2=9-U0015716
 
 # concatenated paths
-BAMS=$READS/Sample_${U1}/${U1}_GTGGCC_${BAM},$READS/Sample_${WAG}/${WAG}_CGTACG_${BAM},$READS/Sample_${U2}/${U2}_ACTGAT_${BAM}
-MAPS=$READS/Sample_${U1}/${U1}_GTGGCC_${MAP},$READS/Sample_${WAG}/${WAG}_CGTACG_${MAP},$READS/Sample_${U2}/${U2}_ACTGAT_${MAP}
+BAMS=$READS/Sample_${U1}/${U1}_GTGGCC_${BAM},$READS/Sample_${U2}/${U2}_ACTGAT_${BAM},$READS/Sample_${WAG}/${WAG}_CGTACG_${BAM}
+MAPS=$READS/Sample_${U1}/${U1}_GTGGCC_${MAP},$READS/Sample_${U2}/${U2}_ACTGAT_${MAP},$READS/Sample_${WAG}/${WAG}_CGTACG_${MAP}
 
 # output goes here
 WORKDIR=doc/circos
 
-ARGS="-gff3 $GFF3 -m $MAPS -w $WORKDIR -ref $REF -genes $GENES -b $BAMS --verbose"
+# add --compute to recalculate binned data files. this takes a long time!
+ARGS="-gff3 $GFF3 -m $MAPS -w $WORKDIR -ref $REF -genes $GENES -b $BAMS --verbose --compute"
 perl script/make_circos_tracks.pl $ARGS
+circos -conf $WORKDIR/circos.conf -debug_group text
+open circos.png
