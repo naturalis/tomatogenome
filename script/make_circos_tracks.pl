@@ -2,7 +2,8 @@
 use strict;
 use warnings;
 use Getopt::Long;
-use List::Util 'sum';
+use List::Util qw'sum shuffle';
+use Bio::DB::Sam;
 use Bio::Phylo::Util::Logger ':levels';
 
 # global variables
@@ -21,7 +22,8 @@ sub check_args {
 	my $bams;             # BAM files to compute coverage
 	my $size = 1_000_000; # bin size for cover
 	my $readwindow = 10;  # window size for misincorporation
-	my $increment = 0.05; # radius increments for circos
+	my $increment = 0.07; # radius increments for circos
+	my $compute;          # compute data tracks
 	GetOptions(
 		'verbose+'     => \$verbosity,
 		'gff3=s'       => \$gff3,
@@ -33,6 +35,7 @@ sub check_args {
 		'size=i'       => \$size,
 		'readwindow=i' => \$readwindow,
 		'increment=f'  => \$increment,
+		'compute'      => \$compute,
 	);
 
 	# instantiate logger
@@ -57,7 +60,8 @@ sub check_args {
 		'bams'       => \@bams,
 		'size'       => $size,
 		'readwindow' => $readwindow,
-		'increment'  => $increment;
+		'increment'  => $increment,
+		'compute'    => $compute;
 }
 
 # scans a GFF3 file for one or more locus identifiers 
@@ -109,153 +113,258 @@ sub read_gff3 {
 }
 
 # reads a fasta file, returns a list as required by the input
-# for write_karyotype
+# for write_karyotype, i.e. a list of tuples where each first
+# element is a chromosome ID (actually, the first word on the
+# FASTA definition line) and each second element is the size
+# of that chromosome.
 sub read_fasta {
-	my $file = shift;
+	my ( $file, $size ) = @_;
+	
+	# open file handle
 	$Log->info("going to read chromosomes from FASTA $file");
 	open my $fh, '<', $file or die $!;
-	my ( $current, %length, @result );
+	
+	# iterate over lines
+	my ( $this, $seq, %length, %gc, %n, %ag, @result );
 	while(<$fh>) {
 		chomp;
+		
+		# line is a FASTA definition line, capture the first word
 		if ( /^>(\S+)/ ) {
 			my $id = $1;
-			$current = $id;
-			$length{$current} = 0;
-			push @result, $current;
-			$Log->debug("going to read chromosome $current");
+			
+			# process previous record
+			if ( $this ) {
+				$length{$this} = length $seq;
+				
+				# compute windows of GC content, missing data and purine content
+				($gc{$this},$n{$this},$ag{$this}) = process_seq_segments( $seq, $size );
+				$seq = '';
+			}
+			
+			# move on to the current record
+			$this = $id;
+			push @result, $this;
+			$Log->info("going to read chromosome $this");
 		}
+		
+		# line is a sequence line
 		else {
-			my $seq = $_;
-			$seq =~ s/\s//g;
-			$length{$current} += length $seq;
+			s/\s//g;
+			$seq .= $_;
 		}
 	}
-	return map { [ $_ => $length{$_} ] } @result;
+	
+	# process last record
+	$length{$this} = length $seq;
+	( $gc{$this}, $n{$this}, $ag{$this} ) = process_seq_segments( $seq, $size );
+	$seq = '';	
+	
+	# create and return ordered list of lists
+	return map { [ 
+		$_,            # chromosome ID
+		$length{ $_ }, # integer: length of this chromosome
+		$gc{     $_ }, # list of floats: GC content in windows of $size
+		$n{      $_ }, # list of floats: missing data fraction in windows of $size
+		$ag{     $_ }, # list of floats: purine content in windows of $size
+	
+	] } @result;
+}
+
+# calculate percentage of GC content, missing bases (nN) and purines (aAgG) for
+# sequence $seq over bins of $size. returns array refs of percentages, i.e. values
+# between 0..100
+sub process_seq_segments {
+	my ( $seq, $size ) = @_;
+	my ( @gc, @n, @purines );
+
+	# iterate over segments		
+	for my $window ( unpack("(A$size)*", $seq) ) {
+	
+		# compute GC content
+		my $g = $window =~ tr/gG/gG/;
+		my $c = $window =~ tr/cC/cC/;
+		push @gc, ( ( $g + $c ) / length $window ) * 100;
+		
+		# compute Nn content
+		my $n = $window =~ tr/nN/nN/;
+		push @n, ( $n / length $window ) * 100;
+		
+		# compute purine content
+		my $a = $window =~ tr/aA/aA/;
+		push @purines, ( ( $a + $g ) / length $window ) * 100;
+		
+	}
+	return \@gc, \@n, \@purines;
 }
 
 # reads the coverage in a BAM file, averages this in bins of $size for each chromosome
 sub read_coverage {
-	my ( $bam, $refseq, $size ) = @_;
+	my ( $bam, $refseq, $size, @chromosomes ) = @_;
 	$Log->info("going to read sliding window (size: $size) coverage from BAM file $bam");
-	my %result;
 
-	# this is going to create a lot of data, so we will return by reference
-	open my $fh, "samtools mpileup -BQ0 -d10000000 -f $refseq $bam |" or die "Can't run samtools: $!";
-	my @window;
-	my $current;
-	while(<$fh>) {
-		chomp;
-		my @record = split /\s+/, $_;
-		my ( $chr, $cover ) = @record[0,3];
-
-		# starting a new chromosome
-		if ( not $result{$chr} ) {
-
-			# finish the previous one
-			if ( $current ) {
-				push @{ $result{$current} }, sum(@window)/scalar(@window);
-				@window = ();
-				$Log->info("finishing $current window ".scalar(@{ $result{$current} }));
-			}
-
-			# initialize the new one
-			$result{$chr} = [];
-			$current = $chr;
-			$Log->info("going to compute sliding window coverage for chromosome $chr");
-		}
-		push @window, $cover;
-
-		# compute average over window
-		if ( $size == scalar @window ) {
-			push @{ $result{$current} }, sum(@window)/$size;
-			@window = ();
-			$Log->info("done $current window ".scalar(@{ $result{$current} }));
-		}
-		
-	}
-	return \%result;
-}
-
-# reads mapDamage fragmentation and misincorporation results, returns these
-# per chromosome
-sub read_mapdamage {
-	my ( $dir, $readwindow ) = @_;
-	my ( %fragmentation, %misincorporation );
-
-	# read from directory with all mapDamage output
-	$Log->info("going to read mapDamage results in dir '$dir'");
-	opendir my $dh, $dir or die "Can't open dir handle: $!";
-	while( my $entry = readdir $dh ) {
+    # instantiate helper objects
+    my $db = Bio::DB::Sam->new(
+        '-bam'   => $bam,
+        '-fasta' => $refseq,
+    );
 	
-		# tabular data with DNA fragmentation
-		if ( $entry =~ m/dnaFrag_(.+?)_(\d+?)_(\d+?)\.txt/ ) {
-			my ( $chromo, $around, $length ) = ( $1, $2, $3 );
-			$fragmentation{$chromo} = [ read_fragmentation( "$dir/$entry", $around, $length ) ];
-		}
+	# iterate over chromosome tuples
+	my ( %cover, %qual, %bases );
+	for my $tuple ( @chromosomes ) {
+		my ( $chromo, $chr_size ) = @{ $tuple };
+		$cover{ $chromo } = [];
+		$qual{  $chromo } = [];
+		$bases{ $chromo } = [];
 		
-		# tabular data with inferred misincorporations
-		elsif ( $entry =~ m/nuclComp_(.+?)\.txt/ ) {
-			my $chromo = $1;
-			$misincorporation{$chromo} = [ read_misincorporation( "$dir/$entry", $readwindow ) ];
-		}
+		# read reference chromosome
+		$Log->info("going to read chromosome $chromo from reference $refseq");
+		my $seq;
+		open my $fh, '<', $refseq or die $!;
+		while(<$fh>) {
+			chomp;
+			if ( /^>${chromo}\s*$/ ) {
+				$seq = '';
+				next;
+			}
+			$seq .= $_ if defined $seq;
+		}		
+		
+		# iterate over bins
+		for ( my $start = 1; $start <= $chr_size; $start += $size ) {
+		
+			# calculate interval end
+			my $end = ( $start + $size ) < $chr_size ? $start + $size : $chr_size;
+			
+			# scan the BAM file
+			my ( $qual, $cover, $locations ) = compute_coverage_and_quality(  
+				'chromo' => $chromo,
+				'start'  => $start,
+				'end'    => $end,
+				'db'     => $db,
+			);
+
+			# store results
+			push @{ $cover{$chromo} }, $cover;
+			push @{ $qual{$chromo} }, $qual;
+			
+			# get bases from reference chromosome
+			push @{ $bases{ $chromo } }, compute_upstream_bias(
+				'seq'       => \$seq, # this is a whole chromosome, pass by reference
+				'locations' => $locations,
+				'samples'   => 100,
+				'chromo'    => $chromo,
+			);			
+
+		}	
 	}
-	return \%fragmentation, \%misincorporation;
+	return \%cover, \%qual, \%bases;
 }
 
-# reads the fraction of C>T substitutions in the first $size read positions
-sub read_misincorporation {
-	my ( $file, $readwindow ) = @_;
-	$Log->info("going to read fraction of C>T substitions in first 10 read positions from $file");
-	my @header;
-	my %transition;
-	open my $fh, '<', $file or die $!;
-	my $counter = 0;
-	RECORD: while(<$fh>) {
-		chomp;
-		if ( not @header ) {
-			@header = split;
-		}
-		else {
-			my @record = split;
-			for my $i ( 0 .. $#header ) {
-				if ( $header[$i] =~ /^[ACGT]>[ACGT]$/ ) {
-					$transition{$header[$i]} += $record[$i];		
-				}
-			}
-			last RECORD if $counter++ == $readwindow;
-		}
-	}
-	return $transition{"C>T"} / sum(values(%transition));
+# for a sample of locations, fetches the base of the refseq
+# in order to compute upstream AG bias due to fragmentation
+sub compute_upstream_bias {
+    my %args = @_;
+
+	# we will use this to complement bases on the - strand
+    my %complement = ( 
+    	'A' => 'T', 
+    	'C' => 'G', 
+    	'G' => 'C', 
+    	'T' => 'A',
+    );
+    
+    my $sample; # tracks number of samples
+    my %locations = %{ $args{'locations'} }; # keys are locations, values are strand
+    my %bases; # just for logging
+
+	# this iterates over raw locations (single integers)
+    LOCATION: for my $loc ( shuffle(keys %locations) ) {
+    
+    	# locations are 1-based so decrement for substr
+        my $raw_base = uc substr ${ $args{'seq'} }, $loc - 1, 1;
+        next LOCATION if $raw_base !~ /[ACGT]/; # skip missing
+        
+        # bases on the +1 strand need to be complemented because
+        # we are now looking at the refseq and we want what was
+        # on its complement in the fragmented template
+        my $base = $locations{$loc} < 1 ? $complement{$raw_base} : $raw_base;
+        $bases{$base}++;
+        
+        last LOCATION if $args{'samples'} == ++$sample;
+    }
+    
+    # return frequencies of bases
+	my %frequencies = map { $_ => $bases{$_} / $sample } keys %bases;
+	use Data::Dumper;
+	$Log->info(Dumper(\%frequencies));
+    return \%frequencies;
 }
 
-# computes 1 base upstream excess of purines
-sub read_fragmentation {
-	my ( $file, $around, $length ) = @_;
-	$Log->info("going to read fragmentation data from $file");
-	my %result;
-	my @header;
-	open my $fh, '<', $file or die $!;
-	while(<$fh>) {
-		chomp;
-		if ( not @header ) {
-			@header = split;
-		}
-		else {
-			my @record = split;
-			my $strand = 0;
-			my $pos    = 1;
-			my $tot    = 8;
-			my $A      = 2;
-			my $G      = 4;
-			if ( $record[$pos] == -1 ) {
-				$Log->info("computing 1 base upstream excess of purines on $record[$strand] strand"); 
-				$result{ $record[$strand] } = [ $record[$A] + $record[$G], $record[$tot] ];
-			}
-		}
-	}
-	my $totPurines = $result{ "0"  }->[0] + $result{ "16" }->[0];
-	my $totTot     = $result{ "16" }->[1] + $result{ "16" }->[1]; 
-	return $totPurines / $totTot;
+# iterates over reads inside interval, computes 
+# coverage and mapping quality and calculates
+# the locations of 1 base upstream from start of read
+sub compute_coverage_and_quality {
+    my %args = @_;
+    
+    # make interval for get_features_by_location
+    my %loc = (
+        '-seq_id' => $args{'chromo'},
+        '-start'  => $args{'start'},
+        '-end'    => $args{'end'},      
+    );  
+
+    # we compute coverage by counting the number of aligned reads with $cover
+    # and computing their average length by summing the lengths
+    my $reads  = 0;
+    my $length = 0;
+
+    # we record all distinct starting positions of aligned reads with %starts. 
+    # subsequently we will calculate the base composition one base upstream from 
+    # that on the reference. if there is fragmentation this should show an AG 
+    # bias on the reference.
+    my %starts;
+
+    # we record all qualities in @quals, then average that
+    my @quals;
+
+    # iterate over alignments within interval
+    ALN: for my $aln ( $args{'db'}->get_features_by_location(%loc) ) {
+
+        # start and end coordinates of the alignment on the reference
+        my ( $aln_start, $aln_end ) = ( $aln->start, $aln->end );
+        my $strand = $aln->query->strand; # strandedness of the read
+        
+        # if the read is on the +1 strand the upstream base is aln start - 1,
+        # if it is on the -1 strand the upstream base is aln end + 1 
+        # and we need to complement
+        my $upstream_base = $strand < 1 ? $aln_end + 1 : $aln_start - 1;
+        $starts{ $upstream_base } = $strand;
+    
+        # running tally of qualities
+        push @quals, $aln->qual;
+    
+        # running tally of alignment lengths
+        $length += ( $aln_end - $aln_start );
+    
+        # number of reads
+        $reads++;
+        $Log->info("Read: $reads") unless $reads % 100000;
+    }
+
+    # compute coverage
+    my $cover = ( $reads * ( $length / $reads ) ) / ( $args{'end'} - $args{'start'} );
+
+    # compute average quality
+    my $qual = sum(@quals) / scalar(@quals);
+    
+    # communicate results
+    $Log->info( "Total reads: $reads" );
+    $Log->info( "Average cover: $cover" );
+    $Log->info( "Average mapping quality: $qual" );
+    $Log->info( "Found ".scalar(keys(%starts))." distinct upstream bases" );
+
+    return $qual, $cover, \%starts;
 }
 
 # write a circos karyotype track to a provided file name. 
@@ -272,7 +381,7 @@ sub write_karyotype {
 	# iterate over chromosomes
 	for my $i ( 0 .. $#chr ) {
 		my ( $label, $end ) = @{ $chr[$i] };
-		printf $fh "chr - %s %s 0 %i chr%i\n", $label, $label, $end, $i + 1;
+		printf $fh "chr - %s %s 1 %i chr%i\n", $label, $label, $end, $i + 1;
 	}
 }
 
@@ -305,14 +414,68 @@ sub write_continuous_track {
 		my $chrsize = $c->[1]; # chromosome size (in bp, from ref genome)
 		
 		# iterate over data bins for this chromosome
-		for my $i ( 0 .. $#{ $data->{$chromo} } ) {
+		my $last_index = $#{ $data->{$chromo} };
+		for my $i ( 0 .. $last_index ) {
 			my $start = $i * $size;
-			my $end   = ( $start + $size ) < $chrsize ? $start + $size : $chrsize;
-			my $value = $data->{$chromo}->[$i];
-			printf $fh "%s %i %i %f\n", $chromo, $start, $end, $value; 
+
+			# calculate the end coordinate:			
+			# there is only one data element, assume it applies to the whole chromosome
+			# OR the start + increment exceeds the chromosome size
+			my $end;
+			if ( $last_index == 0 || ( $start + $size ) > $chrsize ) {
+				$end = $chrsize;
+			}
+			else {
+				$end = $start + $size;
+			}
+
+			# print the datum
+			printf $fh "%s %i %i %f\n", $chromo, $start, $end, $data->{$chromo}->[$i]; 
 		}
 	}
 }
+
+# similar to write_continuous_track, but each datum is expected to consist
+# of a hash whose keys are upper case bases (ACGT), the values of which
+# are listed as comma-separated, for stacked histograms
+sub write_stacked_track {
+	my ( $outfile, $data, $size, @chr ) = @_;
+	
+	# open file handle
+	$Log->info("going to write continuous data track (bin size: $size) to $outfile");
+	open my $fh, '>', $outfile or die $!;
+	
+	# iterate over chromosome data structure as returned by read_fasta
+	for my $c ( @chr ) {
+		my $chromo  = $c->[0]; # i.e., chromosome name, such as "SL2.40ch00"
+		my $chrsize = $c->[1]; # chromosome size (in bp, from ref genome)
+		
+		# iterate over data bins for this chromosome
+		my $last_index = $#{ $data->{$chromo} };
+		for my $i ( 0 .. $last_index ) {
+			my $start = $i * $size;
+
+			# calculate the end coordinate:			
+			# there is only one data element, assume it applies to the whole chromosome
+			# OR the start + increment exceeds the chromosome size
+			my $end;
+			if ( $last_index == 0 || ( $start + $size ) > $chrsize ) {
+				$end = $chrsize;
+			}
+			else {
+				$end = $start + $size;
+			}
+			
+			# the data hash is keyed on uppercase nucleotide symbols, values are freqs
+			my %bases = %{ $data->{$chromo}->[$i] };
+			my $stacked = join ',', map { $_ || 0.0 } @bases{qw[A C G T]};
+
+			# print the datum
+			printf $fh "%s %i %i %s\n", $chromo, $start, $end, $stacked; 
+		}
+	}
+}
+
 
 # the write_circos_* subroutines populate a circos.conf file with
 # karyotype, label, heatmap and histogram tracks. they contain 
@@ -324,14 +487,43 @@ sub write_circos_header {
 
 	# write header
 	print $fh <<"HEADER";
+<<include etc/housekeeping.conf>>
 <colors>
 	<<include etc/colors.conf>>
 </colors>
 <fonts>
 	<<include etc/fonts.conf>>
 </fonts>
-<<include ideogram.conf>>
-<<include ticks.conf>>
+<ideogram>		
+	<spacing>
+		default = 30u
+		break   = 2u
+		axis_break_style = 2		
+		<pairwise SL2.40ch12,SL2.40ch00>
+			spacing = 10u
+		</pairwise>		
+		<break_style 2>
+			thickness        = 50p
+			stroke_color     = black
+			stroke_thickness = 5p
+		</break>		
+	</spacing>	
+	show           = yes
+	thickness      = 25p
+	fill           = yes
+	fill_color     = black
+	radius         = 0.75r
+	show_label     = yes
+	label_font     = condensed
+	label_radius   = dims(ideogram,radius_outer) + 20p
+	label_size     = 24p
+	label_parallel = yes
+	show_bands            = yes
+	fill_bands            = yes
+	band_stroke_thickness = 0
+	band_stroke_color     = black
+	band_transparency     = 4
+</ideogram>
 karyotype = $karyotype
 <image>
 	dir = .
@@ -353,16 +545,12 @@ HEADER
 sub write_circos_label_config {
 	my ( $fh, $labels ) = @_;
 	print $fh <<"LABELS";
-
 <plot>
 	type   = text
 	color  = black
 	file   = $labels
-
-	# on tick scale
 	r0 = 1r
-	r1 = 1r+200p
-
+	r1 = 1r+500p
 	show_links     = yes
 	link_dims      = 0p,0p,50p,0p,10p
 	link_thickness = 2p
@@ -375,49 +563,60 @@ sub write_circos_label_config {
 LABELS
 }
 
-sub write_circos_heatmap_config {
-	my ( $fh, $datafile, $radius ) = @_;
-		print $fh <<"HEATMAP";
-<plot>
-	type    = heatmap
-	file    = $datafile
-	color   = spectral-11-div
-	r0      = ${radius}r
-	r1      = ${radius}r+25p
-	stroke_thickness = 1
-	stroke_color     = black
-</plot>
-HEATMAP
-}
-
 sub write_circos_histogram_config {
-	my ( $fh, $datafile, $radius ) = @_;
-		print $fh <<"HISTOGRAM";
+	my ( $fh, $datafile, $radius, $min, $max ) = @_;
+	my $spacing = int( ( $max - $min ) / 10 );
+	print $fh <<"HISTOGRAM";
 <plot>
 	type      = histogram
 	file      = $datafile
-	r1        = ${radius}r+25p
+	r1        = ${radius}r+70p
 	r0        = ${radius}r
 	stroke_type = outline
 	thickness   = 1
 	color       = black
 	extend_bin  = yes
+	min         = $min
+	max         = $max
 	<axes>
 		<axis>
-			spacing   = 5p
+			spacing   = $spacing
 			color     = lgrey
 			thickness = 1
 		</axis>
 	</axes>
+	<rules>
+		<rule>
+			condition  = 1
+			fill_color = eval(sprintf("spectral-9-div-%d",remap_int(var(value),$min,$max,1,9)))
+		</rule>
+	</rules>
 </plot>
 HISTOGRAM
+}
+
+sub write_circos_stacked_histogram_config {
+	my ( $fh, $datafile, $radius, $min, $max ) = @_;
+	print $fh <<"STACKED";
+<plot>
+	type       = histogram
+	file       = $datafile
+	r1         = ${radius}r+70p
+	r0         = ${radius}r
+	color      = white
+	fill_color = red,green,black,blue
+	thickness  = 0
+	extend_bin = no
+	axis       = no
+</plot>
+STACKED
 }
 
 sub main {
 	my %args = check_args();
 
 	# read karyotype from FASTA, write to karyotype file
-	my @chromosomes = read_fasta( $args{'refseq'} );
+	my @chromosomes = read_fasta( $args{'refseq'}, $args{'size'} );
 	my $karyotype = $args{'workdir'} . '/karyotype.txt';
 	write_karyotype( $karyotype, @chromosomes );
 
@@ -425,53 +624,57 @@ sub main {
 	my $circos_conf = $args{'workdir'} . '/circos.conf';
 	my $fh = write_circos_header( $circos_conf, $karyotype );
 
-    # read gene locations, write to labels file, expand config file
-    my @locations = read_gff3( $args{'gff3'}, @{ $args{'genes'} } );
-	my $labels = $args{'workdir'} . '/labels.txt';
-	write_labels( $labels, @locations );
-	write_circos_label_config( $fh, $labels );
+    # handle gene locations
+	my $labelfile = $args{'workdir'} . '/candidates.txt';
+	if ( $args{'compute'} ) {    
+    	my @locations = read_gff3( $args{'gff3'}, @{ $args{'genes'} } );
+		write_labels( $labelfile, @locations );
+	}
+	write_circos_label_config( $fh, $labelfile );
 	
 	# these govern the radius of the outermost data track and the
 	# decrements going from outermost to innermost
 	my $radius = 1 - $args{'increment'};
 	my $inc    = $args{'increment'};	
-
-	# read coverage, write heatmap tracks
-	for my $i ( 0 .. $#{ $args{'bams'} } ) {
 	
-		# read coverage for BAM file $i
-		my $bam = $args{'bams'}->[$i];
-		my $coverage = read_coverage( $bam, @args{qw[refseq size]} ); # returns hash ref
-		
-		# write data file
+	# handle GC content
+	my %gc = map { $_->[0] => $_->[2] } @chromosomes;
+	my $gcfile = $args{'workdir'} . '/gccontent.txt';
+	write_continuous_track( $gcfile, \%gc, $args{'size'}, @chromosomes );
+	# decrement data track radius
+	$radius -= $inc;		
+	write_circos_histogram_config( $fh, $gcfile, $radius, 25, 40 );	
+
+	# read coverage, write histograms tracks
+	for my $i ( 0 .. $#{ $args{'bams'} } ) {
+			
+		# data files
 		my $coverfile = $args{'workdir'} . "/coverage${i}.txt";
-		write_continuous_track( $coverfile, $coverage, $args{'size'}, @chromosomes );
+		my $qualfile  = $args{'workdir'} . "/quality${i}.txt";
+		my $basesfile = $args{'workdir'} . "/bases${i}.txt";
 		
-		# write config
+		# this step takes long
+		if ( $args{'compute'} ) {
+	
+			# read coverage for BAM file $i, returns hash ref
+			my $bam = $args{'bams'}->[$i];
+			my ( $cover, $qual, $bases ) = read_coverage( $bam, @args{qw[refseq size]}, @chromosomes ); 
+						
+			# write data tracks
+			write_continuous_track( $coverfile, $cover, $args{'size'}, @chromosomes );
+			write_continuous_track( $qualfile, $qual, $args{'size'}, @chromosomes );
+			write_stacked_track( $basesfile, $bases, $args{'size'}, @chromosomes );
+		}
+		
+		# decrement data track radius
+		$radius -= $inc * 1.6;		
+		write_circos_histogram_config( $fh, $coverfile, $radius, 0, 10 );
+		# decrement data track radius
 		$radius -= $inc;
-		write_circos_heatmap_config( $fh, $coverfile, $radius );
-	}
-
-	# read mapdamage tables, write histogram tracks
-	my %radius = (
-		'frag' => $radius,
-		'mis'  => $radius - $inc * scalar @{ $args{'mapdamage'} },
-	);
-	for my $i ( 0 .. $#{ $args{'mapdamage'} } ) {
-		my $md = $args{'mapdamage'}->[$i];
-		my ( $frag_data, $mis_data ) = read_mapdamage($md, $args{'readwindow'});
-		$radius{'frag'} -= $inc;
-		$radius{'mis'}  -= $inc;		
-
-		# write fragmentation track
-		my $frag_file = $args{'workdir'} . "/fragmentation${i}.txt";
-		write_continuous_track( $frag_file, $frag_data, $args{'size'}, @chromosomes );
-		write_circos_histogram_config( $fh, $frag_file, $radius{'frag'} );
-
-		# write misincorporation track
-		my $mis_file = $args{'workdir'} . "/misincorporation${i}.txt";
-		write_continuous_track( $mis_file, $mis_data, $args{'size'}, @chromosomes );
-		write_circos_histogram_config( $fh, $mis_file, $radius{'mis'} );		
+		write_circos_histogram_config( $fh, $qualfile, $radius, 30, 60 );
+		# decrement data track radius
+		$radius -= $inc;
+		write_circos_stacked_histogram_config( $fh, $basesfile, $radius, 0, 1 );			
 	}
 
 	# print footer
