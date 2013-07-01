@@ -32,39 +32,8 @@ my $Log = Bio::Phylo::Util::Logger->new(
 	'-level' => $verbosity,
 );
 
-# color code by sweetness / disease resistance
-my %colour = (
-	'Solyc02g085500.2'   => 'black',   # vorm van vrucht (rond of peervormig)
-	'Solyc07g053630.2.1' => 'lgreen',  # golden 1-like TF
-	'Solyc10g008160.2.1' => 'green',   # golden 2-like TF
-	'Solyc09g010080.2'   => 'dgreen',  # suikergehalte van vrucht (hoog of laag)
-	'Solyc10g083290'     => 'lblue',   # carbohydrate transports
-	'Solyc09g010090'     => 'dblue',   # carbohydrate transports
-	'Solyc10g083300'     => 'purple',  # carbohydrate transports
-	'Solyc06g008300'     => 'red',     # disease resistance
-	'Solyc01g009690.1.1' => 'lred',    # disease resistance
-	'Solyc01g006550.2.1' => 'dred',    # disease resistance
-	'Solyc03g082780.1.1' => 'orange',  # disease resistance
-	'Solyc05g013300'     => 'lorange', # disease resistance
-	'Solyc09g018220.1.1' => 'dorange', # resistentiegen tegen tomato mosaic virus
-);
-
-# open file handle for links file
-open my $fh, '>', "${workdir}/links.txt" or die $!;
-
-# start tracking max values
-my %max;
-
 # traverse input directories
 find( \&wanted, @dir );
-
-# write segments file
-{
-	open my $segFH, '>', "${workdir}/segments.txt" or die $!;
-	for my $id ( @id ) {
-		printf $segFH "%s 0 %f %s %s\n", $id, $max{$id}, $id, $axis{$id};
-	}
-}
 
 # this is the code reference that gets passed
 # to find()
@@ -75,6 +44,10 @@ sub wanted {
 		my $treefile = $_;
 		my $gene = $_;
 		$gene =~ s/\Q$extension\E$//;
+				
+		# open file handle for links file
+		my $links_file = "${workdir}/links-${gene}.txt";
+		open my $fh, '>', $links_file or die "Can't open $links_file: $!";
 	
 		# the output from datamonkey
 		my $csv = 'slacreport.csv';
@@ -96,6 +69,12 @@ sub wanted {
 		# prune all other tips
 		$tree->keep_tips(\@tips);
 		
+		# calculate the sum of branch lengths of the remainder
+		my $length = $tree->calc_tree_length;
+		$Log->info("total tree length is $length");
+		
+		# start tracking max values
+		my %max = map { $_ => 1000 } @id;		
 		# do all pairwise comparisons
 		for my $i ( 0 .. $#tips - 1 ) {
 			PAIR: for my $j ( $i + 1 .. $#tips ) {
@@ -103,38 +82,27 @@ sub wanted {
 				my $source_name = $source_node->get_name;
 				my $target_node = $tips[$j];
 				my $target_name = $target_node->get_name;
-				
-				# compute patristic distance
-				my $distance = $source_node->calc_patristic_distance($target_node);
-				$Log->info("distance between $source_name and $target_name is $distance");
-				next PAIR if $distance <= 0.0000000001; # i.e. identical sequences
 
 				# these will be numbers between 0 and 1
-				my $source_y = $source_node->get_branch_length / $distance * 1000;
-				my $target_y = $target_node->get_branch_length / $distance * 1000;
+				my $source_y = $source_node->get_branch_length / $length * 1000;
+				my $target_y = $target_node->get_branch_length / $length * 1000;
+				$Log->info("$source_name y: $source_y");
+				$Log->info("$target_name y: $target_y");
 				
-				# initialize widths
-				my $source_width = 0;
-				my $target_width = 0;
-				
-				# find the source and target in the slacreport
-				for my $k ( 0 .. $#{ $slacreport{'Branch'} } ) {
-					my $name = $slacreport{'Branch'}->[$k];
-					if ( $name eq $source_name ) {
-						$source_width = compute_width( $k, %slacreport ) / 2 * 1000;
-						$Log->info("width at $name is $source_width");
-					}
-					elsif ( $name eq $target_name ) {
-						$target_width = compute_width( $k, %slacreport ) / 2 * 1000;
-						$Log->info("width at $name is $target_width");
-					}
-				}
+				# the widths are the proportions of the alignments that are under
+				# direction selection. being proportions these are numbers between
+				# 0 and 1, but we divide them by 2 and multiply by 1000 so we can
+				# more concisely add them to and subtract them from the coordinates
+				# of where the ribbon touches a hive axis
+				my ($source_width,$target_width) = compute_ribbon_widths($source_name,$target_name,%slacreport);
+				$Log->info("$source_name width: $source_width");
+				$Log->info("$target_name width: $target_width");
 				
 				# print the edge
 				printf $fh "%s %f %f %s %f %f color=%s # %s\n",
 					$source_name, $source_y + $source_width, $source_y - $source_width,
 					$target_name, $target_y + $target_width, $target_y - $target_width,
-					$colour{$gene} || 'black', $gene;
+					'black', $gene;
 				
 				# increment maxes
 				if ( $source_y + $source_width > $max{$source_name} ) {
@@ -146,11 +114,114 @@ sub wanted {
 				}				
 			}
 		}
+		
+		# write segments file
+		open my $segFH, '>', "${workdir}/segments-${gene}.txt" or die $!;
+		for my $id ( @id ) {
+			printf $segFH "%s 0 %f %s %s\n", $id, $max{$id}, $id, $axis{$id};
+		}
+		
+		# write config file
+		print_conf($gene);	
+		$Log->info("*** done with $gene ***");	
 	}
 }
 
+# prints the config file for hiveplot
+sub print_conf {
+my $gene = shift;
+my $template = '<colors>
+<<include etc/colors.conf>>
+<<include etc/brewer.conf>>
+</colors>
+
+<image>
+	size = 1000
+	dir  = .
+	file = hiveplot-%s.png
+	png  = yes
+	background        = white
+	auto_alpha_steps  = 10
+</image>
+
+<segments>
+	file    = doc/hiveplot/segments-%s.txt
+	width   = 5
+	spacing = __$CONF{segments}{width}*3__
+	radius  = __$CONF{image}{size}/20__
+</segments>
+
+<links>
+	<link>
+		file         = doc/hiveplot/links-%s.txt
+		ribbon       = yes
+		offset_start = __$CONF{segments}{width}__
+		offset_end   = __$CONF{segments}{width}__
+		crest        = __$CONF{image}{size}/20__
+		bezier_radius_power = 1
+	</link>
+</links>
+
+<scale>
+	pixsize = 2.5
+</scale>
+
+<axes>
+
+	<axis a>
+		angle      = 0
+		scale      = 1
+		reverse    = no
+		segments   = U0015717
+		scale_norm = 1000
+	</axis>
+
+	<axis b>
+		scale      = 1
+		angle      = 120
+		reverse    = no
+		segments   = WAG0463703
+		scale_norm = 1000
+	</axis>
+
+	<axis c>
+		scale      = 1
+		angle      = 240
+		reverse    = no
+		segments   = U0015716
+		scale_norm = 1000
+	</axis>
+</axes>';
+open my $fh, '>', "${workdir}/linnet-${gene}.conf" or die $!;
+printf $fh $template, $gene, $gene, $gene;
+}
+
+# dispatches to compute_width for both the source and target taxon
+sub compute_ribbon_widths {
+	my ( $source_name, $target_name, %slacreport ) = @_;
+
+	# initialize widths
+	my $source_width = 0;
+	my $target_width = 0;
+	
+	# find the source and target in the slacreport
+	for my $k ( 0 .. $#{ $slacreport{'Branch'} } ) {
+		my $name = $slacreport{'Branch'}->[$k];
+		if ( $name eq $source_name ) {
+			$source_width = compute_width( $k, %slacreport ) / 2 * 1000;
+			$Log->info("width at $name is $source_width");
+		}
+		elsif ( $name eq $target_name ) {
+			$target_width = compute_width( $k, %slacreport ) / 2 * 1000;
+			$Log->info("width at $name is $target_width");
+		}
+	}
+	return $source_width, $target_width;
+}
+
 # width of the ribbon is proportional to the p-value of omega class 3,
-# if the overall p-value is significant and omega class 3 indicates selection
+# if the overall p-value is significant and omega class 3 indicates selection.
+# returns a number between 0 and 1
 sub compute_width {
 	my ( $i, %slacreport ) = @_;
 	my $p_value  = $slacreport{'Corrected p-value'}->[$i];
