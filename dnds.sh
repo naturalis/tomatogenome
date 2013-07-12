@@ -21,6 +21,15 @@ INTERVALS="SL2.40ch10:2292142-2295825"
 # Solyc01g006550.2.1 = disease resistance
 # Solyc03g082780.1.1 = disease resistance
 # Solyc05g013300     = disease resistance
+
+# extra!!!
+# Solyc11g071430 = I2 Fusarium oxysporum resistance
+# Solyc09g010090 = cell wall invertase
+# Solyc06g008450 = Meloidogyne + Macrosiphum resistance
+# Solyc09g098130 = Thrips resistance
+# Solyc02g062560 = ToMV resistance
+# Solyc09g005080 = Verticillium resistance
+
 REFTAXON=ITAG2.3
 OUTGROUP=WAG0463703
 CUTOFF=1.00
