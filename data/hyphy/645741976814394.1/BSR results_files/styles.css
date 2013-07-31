@@ -1,0 +1,61 @@
+H1.SuccessCap   {border-radius: 4px;background-color: #803D03; color:white; text-align: center; font-family: times; margin:10px;font-variant: small-caps;text-transform: none; font-size:28px;}
+
+A.InfoLink:link    { color: #803D03; }
+A.InfoLink:visited { color: #803D03; }
+A.InfoLink:hover   { color: black; }
+
+*.DMLink:link    { color: white; }
+*.DMLink:visited { color: white; }
+*.DMLink:hover   { color: black; background-color: white;}
+ 
+DIV.RepClassBox {border-radius: 4px; max-width: 95%;color: #803D03; text-indent: 10px;font-size: 14px; font-family: arial;border: solid 1px #803D03; text-align: left;  margin:10px; padding:5px; font-variant: small-caps;text-transform: none;}
+DIV.RepClassSM  {max-width: 95%;color: black; text-indent: 10px;font-size: 12px; font-family: arial;background-color: #DDDDDD; text-align: left;  margin:10px; padding:5px; border-radius: 4px;}
+DIV.WarnClass   {color: white; text-indent: 10px;font-size: 14px; font-family: courier;background-color: #444444; text-align: left;  margin:20px; padding:5px;}
+DIV.WarnClassSM {border-radius: 4px; max-width: 95%;color: white; text-indent: 10px;font-size: small; font-family: courier;background-color: #444444; text-align: left;  margin:10px; padding:5px;}
+DIV.RepClassSM2 {text-indent:0px;margin-top:0px;font-size:12px;padding:5px;}
+DIV.DateStamp {text-indent:0px;text-align:right; margin:0px;font-size:12px;padding:2px;margin-right:10px;font-variant: small-caps;text-transform: none;}
+TR.ModelClass1 {color: black; font-size: 12px; font-family: arial;background-color: white; text-align: center;  padding:5px;}
+TR.ModelClass2 {color: black; font-size: 12px; font-family: arial;background-color: RGB(255,128,64); text-align: center;  padding:5px;}
+
+TD.ModelClass1 {color: black; font-size: 10px; font-family: arial;background-color: white; text-align: center; }
+TD.ModelClass2 {color: black; font-size: 10px; font-family: arial;background-color: RGB(255,128,64); text-align: center;}
+
+TR.TRReport1 {color: black; font-size: 10px; font-family: courier;background-color: white; text-align: right;  padding:5px;}
+TR.TRReport2 {color: black; font-size: 10px; font-family: courier;background-color: RGB(255,128,64); text-align: right;  padding:5px;}
+
+DT.DMDT 	 {font-size: 14px;font-family: arial; text-align: left;  padding:5px;font-weight: bold;}
+
+*.INFO {color: white; background-color: #4682B4; border: solid black 1px; font-size: 12px; text-decoration: none;}
+*.REFERENCE {color: black; background-color: #90EE90; border: dotted 1px black; font-size: 12px; font-style: italic; text-decoration: none;}
+A.NAVBAR {color: black; background-color: white; border: solid 1px black; font-size: 12px; font-variant: small-caps; text-decoration: none;padding-left:2px; padding-right:2px;}
+A.UPLOAD {color: white; background-color: black; border: solid 1px black; font-size: 12px; font-variant: small-caps; text-decoration: none;padding-left:2px; padding-right:2px;}
+*.TABHEAD {color:white;font-variant:small-caps;padding:5px;}
+*.headerTab {position:relative;left:15px;background-color:rgb(80,80,80);color:white;}
+*.highlighted {background-color:RGB(255,128,64);color:black;}
+
+DIV.ErrorTag  {color: black; text-indent: 20px;font-size: medium; font-family: courier; border-color:#57197F; border-width: 2px; border: solid; text-align: left;  margin:20px; padding:5px;}
+DIV.ErrorTagSM{color: black; text-indent: 20px;font-size: 12px; font-family: courier; border-color:#57197F; border-width: 2px; border: solid; text-align: left;  margin:10px; padding:5px;}
+H1.ErrorCap   {color: red; text-align: center; font-family: times; margin:10px;font-variant: small-caps;text-transform: uppercase;}
+DIV.RepClass  {color: black; text-indent: 10px;font-size: 14px; font-family: courier;text-align: left;  margin:20px; padding:10px;}
+
+DIV.FormClass {color: purple; text-indent: 10px;font-size: 14px; font-family: courier;background-color: transparent; text-align: left;  margin:20px; padding:5px;}
+DIV.FormClassSM {color: purple; text-indent: 10px;font-size: small; font-family: courier;background-color: transparent; text-align: left;  margin:10px; padding:5px;}
+
+*.HeaderClass   {color: white; font-size: large; font-family: times;background-color: #444444; text-align: center;  padding:5px;}
+TR.HeaderClassSM {color: white; font-size: 12px; font-family: arial;background-color: #444444; text-align: center;  padding:5px;}
+TH.HeaderClassSM {color: white; font-size: small; font-family: times;background-color: #444444; text-align: center;  padding:5px;}
+.RepClassCT  {color: black; text-indent: 10px;font-size: small; font-family: courier;text-align: center;}
+DIV.RepClassVSM  {max-width: 650px;color: black; text-indent: 10px;font-size: x-small; font-family: courier;background-color: #CCCCCC; text-align: left;  margin-right:10px; margin-top:10px; margin-left:10px; margin-bottom:10px; padding:5px;}
+TR.TRReport  {color: white; font-size: medium; font-family: times;background-color: #444444; text-align: right;  padding:5px;}
+
+TR.TRReportT  {color: white; font-size: x-small; font-family: times;  background-color: #444444; text-align: right;  padding:3px;}
+TR.TRReportPS {color: white; font-size: x-small; font-family: courier;background-color: #ED006A; text-align: right;  padding:3px;}
+TR.TRReportNS {color: black; font-size: x-small; font-family: courier;background-color: #88EB88; text-align: right;  padding:3px;}
+TR.TRReportNT {color: black; font-size: x-small; font-family: courier;background-color: #CCCCCC; text-align: right;  padding:5px;}
+P.DReport {color: #57197F; font-size: small; font-family: arial; padding:5px;font-variant: small-caps;text-indent: 0px;}
+DT.DT1 {color: black; font-family: courier;background-color: white; text-align: left;  padding:5px;}
+DT.DT2 {color: black; font-family: courier;background-color: #DDDDDD; text-align: left;  padding:5px;}
+DT.DTH {color: black; font-family: courier;background-color: #62048E; color: white; text-align: left;  padding:5px;}
+
+div.notify{background:#ffc 0.5em 0px no-repeat;color:#000;border-bottom:1px solid #ffa;font-size:90%;margin:0;padding-left:3em;overflow:hidden;}
+*.HelpfulTips{border:black dashed 1pt; padding: 5px; margin-top: 5px; background: rgb(64,64,64); color: rgb(255,255,255); font-style:italic; font-size: 12px;}
