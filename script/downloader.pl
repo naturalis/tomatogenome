@@ -6,7 +6,7 @@ use Getopt::Long;
 use Bio::Phylo::Util::Logger ':simple';
 
 # process command line arguments
-my $verbosity = WARN "start";
+my $verbosity = WARN;
 my $host = 'ftp.ab.wur.nl';
 my $wd; # server side working directory
 my ( $user, $pass ); # login credentials
@@ -44,6 +44,10 @@ INFO "Found ".scalar(@matches)." files with extension $extension";
 # start downloading
 for my $file ( @matches ) {
 	INFO "Going to download $file into directory $outdir";
-	$ftp->get( $file, "$outdir/$file" );
+	my $url = "ftp://${user}:${pass}\@${host}${wd}/${file}";
+	my $command = "axel -a -o $outdir/$file $url";
+	INFO "COMMAND: '$command'";
+	system( $command );
+#	$ftp->get( $file, "$outdir/$file" );
 }
 INFO "Done.";
