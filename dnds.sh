@@ -7,7 +7,7 @@
 # IDS="Solyc02g085500.2 Solyc09g010080.2 Solyc09g018220.1.1 Solyc10g083290 Solyc09g010090 Solyc10g083300 Solyc06g008300 Solyc01g009690.1.1 Solyc01g006550.2.1 Solyc03g082780.1.1 Solyc05g013300"
 # IDS="Solyc07g053630.2.1" 
 # IDS="Solyc10g008160.2.1"
-INTERVALS="SL2.40ch10:2292142-2295825"
+# INTERVALS="SL2.40ch10:2292142-2295825"
 # Solyc07g053630.2.1 = golden 1-like TF
 # Solyc10g008160.2.1 = golden 2-like TF
 # Solyc02g085500.2   = vorm van vrucht (rond of peervormig)
@@ -29,6 +29,8 @@ INTERVALS="SL2.40ch10:2292142-2295825"
 # Solyc09g098130 = Thrips resistance
 # Solyc02g062560 = ToMV resistance
 # Solyc09g005080 = Verticillium resistance
+IDS=Solyc05g013300.1\ Solyc07g053630.2\ Solyc10g008160.2
+
 
 REFTAXON=ITAG2.3
 OUTGROUP=WAG0463703
@@ -37,14 +39,11 @@ CUTOFF=1.00
 # data files and directories
 DATA=`pwd`/data
 GFF3=$DATA/reference/ITAG2.3_release/ITAG2.3_gene_models.gff3
-REF=$DATA/reference/ITAG2.3_release/ITAG2.3_genomic.fasta
-BAMS=$DATA/reads/Sample_1-U0015717/1-U0015717_GTGGCC_L005-ITAG2.3_genomic.fasta.sam.sorted.bam\ \
-$DATA/reads/Sample_2-U0015717/2-U0015717_GTTTCG_L005-ITAG2.3_genomic.fasta.sam.sorted.bam\ \
-$DATA/reads/Sample_5-WAG0463703/5-WAG0463703_CGTACG_L005-ITAG2.3_genomic.fasta.sam.sorted.bam\ \
-$DATA/reads/Sample_6-WAG0463703/6-WAG0463703_GAGTGG_L005-ITAG2.3_genomic.fasta.sam.sorted.bam\ \
-$DATA/reads/Sample_9-U0015716/9-U0015716_ACTGAT_L005-ITAG2.3_genomic.fasta.sam.sorted.bam\ \
-$DATA/reads/Sample_10-U0015716/10-U0015716_ATTCCT_L005-ITAG2.3_genomic.fasta.sam.sorted.bam
-CANDIDATES=$DATA/candidates
+REF=$DATA/reference/ITAG2.3_release/ITAG2_3_genomic.fasta
+BAM=$DATA/reads/bam
+BAMLIST=`ls $BAM/*.bam`
+BAMS=`echo $BAMLIST | sed -e 's/ /,/'`
+CANDIDATES=$DATA/newgenes
 PHYMLTREE=_phyml_tree.txt
 
 # executables
@@ -76,7 +75,7 @@ for ID in $IDS; do
 	# create directory for all intermediate files for focal ID
 	WORKDIR=$CANDIDATES/$ID
 	if [ ! -d $WORKDIR ]; then
-		mkdir $WORKDIR
+		mkdir -p $WORKDIR
 	fi
 
 	# grep the CDS identifiers from the GFF3
@@ -96,7 +95,7 @@ for ID in $IDS; do
 		fi
 	done
 	
-	# concatenate, consense, align, convert to phylip
+# concatenate, consense, align, convert to phylip
 	FASTA=$WORKDIR/$ID.fa
 	ALN=$WORKDIR/$ID.aln
 	PHYLIP=$WORKDIR/$ID.phy
@@ -105,21 +104,22 @@ for ID in $IDS; do
 		# build a consensus by concatenating all the FASTA data and picking
 		# the best supported base at each site, then fetch the nearest annotated
 		# CDS from GenBank
-		$CONSENSE -f $FASTALIST -q $QUALLIST | $FETCHCODING -r $REFTAXON > $FASTA
-		
+#		$CONSENSE -f $FASTALIST -q $QUALLIST | $FETCHCODING -r $REFTAXON > $FASTA
+		$CONSENSE -f $FASTALIST -q $QUALLIST > $FASTA
+
 		# build a codon alignment
-		cd $BIN && $MACSE -i $FASTA -o $ALN && cd -
+#		cd $BIN && $MACSE -i $FASTA -o $ALN && cd -
 		
 		# convert to PHYLIP, strip stop codons
-		cat $ALN | $FASTA2PHYLIP > $PHYLIP
+#		cat $ALN | $FASTA2PHYLIP > $PHYLIP
 	fi
 	
-	# run phyml, convert to nexus
-	NEXUS=$WORKDIR/$ID.nex
-	if [ ! -f $NEXUS ]; then
-		$PHYML -i $PHYLIP
-		$MERGE -t $PHYLIP$PHYMLTREE -a $PHYLIP > $NEXUS
-	fi	
+# run phyml, convert to nexus
+# 	NEXUS=$WORKDIR/$ID.nex
+# 	if [ ! -f $NEXUS ]; then
+# 		$PHYML -i $PHYLIP
+# 		$MERGE -t $PHYLIP$PHYMLTREE -a $PHYLIP > $NEXUS
+# 	fi	
 done
 
 # process intervals
