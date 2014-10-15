@@ -1,10 +1,22 @@
 #!/bin/bash
-ANCESTORS=S._habrochaites,S._pennellii,S._peruvianum,S._Arcanum,S._galapagense,S._pimpinellifolium,S._chiemliewskii
-DESCENDANTS=S._lycopersicum_old1,S._lycopersicum_old2,Moneymaker,Garderners_Delight,Katinka_Cherry,Sonato,Momotaro
+
+# the general idea is that we want to have alignments that span our genes of interest
+# with an additional window of $SIZE - $ENDS upstream as well as downstream. we start
+# by extracting a larger window and aligning that in order to allow for indels. we 
+# subsequently splice our region of interest out of that larger alignment. we then
+# break that spliced region into chunks that are small enough for datamonkey to 
+# accept to do a GARD analysis
+
+# ANCESTORS=S._habrochaites,S._pennellii,S._peruvianum,S._Arcanum,S._galapagense,S._pimpinellifolium,S._chiemliewskii
+# DESCENDANTS=S._lycopersicum_old1,S._lycopersicum_old2,Moneymaker,Garderners_Delight,Katinka_Cherry,Sonato,Momotaro,Heinz
+
+TEMPLATE=script/GARD.bf.tmpl
+GARD_HELPER=script/GARD_GA_CHC.ibf
 GFF3=data/reference/ITAG2.3_release/ITAG2.3_gene_models.gff3
-CONDIR=data/consensus_by_chromo
-OUTDIR=data/distwindow
-SIZE=11000;
+CONDIR=data/reference/deleteme/out
+OUTDIR=data/genes_with_window
+SIZE=11000
+ENDS=1000
 GENES='Solyc06g008300 Solyc01g009690 Solyc01g006550 Solyc11g071430 Solyc03g082780 
 Solyc06g008450 Solyc09g098130 Solyc02g062560 Solyc09g018220 Solyc05g013300 
 Solyc09g005090 Solyc09g005080 Solyc09g010080 Solyc06g051550 Solyc02g090730 
@@ -26,15 +38,32 @@ for GENE in $GENES; do
 	GBEGIN=`echo $LINE | cut -f 2 -d ' '`
 	GEND=`echo $LINE | cut -f 3 -d ' '`
 	
-	# calculate begin and end coordinates of window
+	# begin and end coordinates of window
 	BEGIN=`echo "$GBEGIN-$SIZE" | bc`
 	END=`echo "$GEND+$SIZE" | bc`
 	
 	# make working directory
-	mkdir $OUTDIR/$GENE	
+	if [ ! -e $OUTDIR/$GENE	]; then
+		mkdir $OUTDIR/$GENE	
+	fi
 	
 	# extract and align window
 	if [ ! -e $OUTDIR/$GENE/$GENE.fas ]; then
+		echo "aligning $OUTDIR/$GENE/$GENE.fas"
 		perl script/fastasample.pl -i $CONDIR/$FASTA.fas -b $BEGIN -e $END | muscle -diags -maxiters 1 > $OUTDIR/$GENE/$GENE.fas
 	fi
+	
+	# top 'n' tail the alignment
+	if [ ! -e $OUTDIR/$GENE/$GENE.trimmed.fas ]; then
+		echo "trimming $OUTDIR/$GENE/$GENE.trimmed.fas"
+		perl script/topntail.pl -i $OUTDIR/$GENE/$GENE.fas -s $ENDS -e $ENDS -wrap 80 -reference ITAG2_3_genomic.fas > $OUTDIR/$GENE/$GENE.trimmed.fas
+	fi
+	
+	# make GARD batch file
+	if [ ! -e $OUTDIR/$GENE/GARD.bf ]; then
+		echo "making GARD batch file $OUTDIR/$GENE/GARD.bf"
+		perl script/make_gard_script.pl -t $TEMPLATE -f `pwd`/$OUTDIR/$GENE/$GENE.trimmed.fas > $OUTDIR/$GENE/GARD.bf
+		cp $GARD_HELPER $OUTDIR/$GENE/
+	fi
+		
 done

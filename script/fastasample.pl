@@ -29,6 +29,7 @@ LINE: while(<$fh>) {
 	chomp;
 	if ( /^>/ ) {
 		$pos = 0;
+		print "\n" if $line > 0;
 		print $_, "\n";
 		$log->debug("defline: $_");
 	}
@@ -47,17 +48,16 @@ LINE: while(<$fh>) {
 		}
 		
 		# window start
-		elsif ( ( $pos < $begin ) && ( ( $pos + length $seq ) > $begin ) ) {
+		elsif ( ( $pos <= $begin ) && ( ( $pos + length $seq ) > $begin ) ) {
 			my $offset = $begin - $pos;
 			print substr $seq, $offset;		
 			$log->debug("$pos intering into window");
 		}
 		
 		# window end
-		elsif ( ( $pos < $end ) && ( ( $pos + length $seq ) > $end ) ) {
+		elsif ( ( $pos < $end ) && ( ( $pos + length $seq ) >= $end ) ) {
 			my $length = $end - $pos;
 			print substr $seq, 0, $length;
-			print "\n";
 			$log->debug("$pos leaving window");
 		}
 				
