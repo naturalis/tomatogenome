@@ -15,5 +15,5 @@ LOCUS=Solyc10g083290
 NEXUS=data/genes_with_window/$LOCUS/$LOCUS.trimmed.fas.out_finalout
 
 # invocation
-perl script/genedrawer.pl $ARGS -l $LOCUS -n $NEXUS
+perl -Ilib script/genedrawer.pl $ARGS -l $LOCUS -n $NEXUS
 
