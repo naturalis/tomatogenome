@@ -3,9 +3,7 @@
 # the general idea is that we want to have alignments that span our genes of interest
 # with an additional window of $SIZE - $ENDS upstream as well as downstream. we start
 # by extracting a larger window and aligning that in order to allow for indels. we 
-# subsequently splice our region of interest out of that larger alignment. we then
-# break that spliced region into chunks that are small enough for datamonkey to 
-# accept to do a GARD analysis
+# subsequently splice our region of interest out of that larger alignment.
 
 # ANCESTORS=S._habrochaites,S._pennellii,S._peruvianum,S._Arcanum,S._galapagense,S._pimpinellifolium,S._chiemliewskii
 # DESCENDANTS=S._lycopersicum_old1,S._lycopersicum_old2,Moneymaker,Garderners_Delight,Katinka_Cherry,Sonato,Momotaro,Heinz
@@ -65,5 +63,12 @@ for GENE in $GENES; do
 		perl script/make_gard_script.pl -t $TEMPLATE -f `pwd`/$OUTDIR/$GENE/$GENE.trimmed.fas > $OUTDIR/$GENE/GARD.bf
 		cp $GARD_HELPER $OUTDIR/$GENE/
 	fi
-		
+	
+	# run hyphy
+	if [ ! -e $OUTDIR/$GENE/$GENE.trimmed.fas.out ]; then
+		echo "launching HYPHY for $GENE"
+		cd $OUTDIR/$GENE/
+		mpirun -np 4 HYPHYMPI GARD.bf
+		cd -
+	fi		
 done
