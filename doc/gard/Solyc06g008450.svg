@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg height="600" width="800" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="149" x2="149" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,4,90)" x="4" y="90">2,344,704</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="285" x2="285" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,153,90)" x="153" y="90">2,349,165</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="342" x2="342" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,289,90)" x="289" y="90">2,353,219</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="397" x2="397" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,346,90)" x="346" y="90">2,354,920</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="533" x2="533" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,401,90)" x="401" y="90">2,356,589</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="567" x2="567" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,537,90)" x="537" y="90">2,360,658</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="617" x2="617" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,571,90)" x="571" y="90">2,361,648</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="691" x2="691" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,621,90)" x="621" y="90">2,363,159</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="800" x2="800" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,695,90)" x="695" y="90">2,365,375</text>
+	<polyline class="scale" points="0,294 0,306 0,300 3,300 3,298 3,302 3,300 7,300 7,298 7,302 7,300 10,300 10,298 10,302 10,300 13,300 13,298 13,302 13,300 17,300 17,298 17,302 17,300 20,300 20,298 20,302 20,300 23,300 23,298 23,302 23,300 27,300 27,298 27,302 27,300 30,300 30,298 30,302 30,300 33,300 33,294 33,306 33,300 37,300 37,298 37,302 37,300 40,300 40,298 40,302 40,300 43,300 43,298 43,302 43,300 47,300 47,298 47,302 47,300 50,300 50,298 50,302 50,300 53,300 53,298 53,302 53,300 57,300 57,298 57,302 57,300 60,300 60,298 60,302 60,300 64,300 64,298 64,302 64,300 67,300 67,294 67,306 67,300 70,300 70,298 70,302 70,300 74,300 74,298 74,302 74,300 77,300 77,298 77,302 77,300 80,300 80,298 80,302 80,300 84,300 84,298 84,302 84,300 87,300 87,298 87,302 87,300 90,300 90,298 90,302 90,300 94,300 94,298 94,302 94,300 97,300 97,298 97,302 97,300 100,300 100,294 100,306 100,300 104,300 104,298 104,302 104,300 107,300 107,298 107,302 107,300 110,300 110,298 110,302 110,300 114,300 114,298 114,302 114,300 117,300 117,298 117,302 117,300 120,300 120,298 120,302 120,300 124,300 124,298 124,302 124,300 127,300 127,298 127,302 127,300 130,300 130,298 130,302 130,300 134,300 134,294 134,306 134,300 137,300 137,298 137,302 137,300 140,300 140,298 140,302 140,300 144,300 144,298 144,302 144,300 147,300 147,298 147,302 147,300 150,300 150,298 150,302 150,300 154,300 154,298 154,302 154,300 157,300 157,298 157,302 157,300 160,300 160,298 160,302 160,300 164,300 164,298 164,302 164,300 167,300 167,294 167,306 167,300 171,300 171,298 171,302 171,300 174,300 174,298 174,302 174,300 177,300 177,298 177,302 177,300 181,300 181,298 181,302 181,300 184,300 184,298 184,302 184,300 187,300 187,298 187,302 187,300 191,300 191,298 191,302 191,300 194,300 194,298 194,302 194,300 197,300 197,298 197,302 197,300 201,300 201,294 201,306 201,300 204,300 204,298 204,302 204,300 207,300 207,298 207,302 207,300 211,300 211,298 211,302 211,300 214,300 214,298 214,302 214,300 217,300 217,298 217,302 217,300 221,300 221,298 221,302 221,300 224,300 224,298 224,302 224,300 227,300 227,298 227,302 227,300 231,300 231,298 231,302 231,300 234,300 234,294 234,306 234,300 237,300 237,298 237,302 237,300 241,300 241,298 241,302 241,300 244,300 244,298 244,302 244,300 247,300 247,298 247,302 247,300 251,300 251,298 251,302 251,300 254,300 254,298 254,302 254,300 257,300 257,298 257,302 257,300 261,300 261,298 261,302 261,300 264,300 264,298 264,302 264,300 267,300 267,294 267,306 267,300 271,300 271,298 271,302 271,300 274,300 274,298 274,302 274,300 278,300 278,298 278,302 278,300 281,300 281,298 281,302 281,300 284,300 284,298 284,302 284,300 288,300 288,298 288,302 288,300 291,300 291,298 291,302 291,300 294,300 294,298 294,302 294,300 298,300 298,298 298,302 298,300 301,300 301,294 301,306 301,300 304,300 304,298 304,302 304,300 308,300 308,298 308,302 308,300 311,300 311,298 311,302 311,300 314,300 314,298 314,302 314,300 318,300 318,298 318,302 318,300 321,300 321,298 321,302 321,300 324,300 324,298 324,302 324,300 328,300 328,298 328,302 328,300 331,300 331,298 331,302 331,300 334,300 334,294 334,306 334,300 338,300 338,298 338,302 338,300 341,300 341,298 341,302 341,300 344,300 344,298 344,302 344,300 348,300 348,298 348,302 348,300 351,300 351,298 351,302 351,300 354,300 354,298 354,302 354,300 358,300 358,298 358,302 358,300 361,300 361,298 361,302 361,300 364,300 364,298 364,302 364,300 368,300 368,294 368,306 368,300 371,300 371,298 371,302 371,300 374,300 374,298 374,302 374,300 378,300 378,298 378,302 378,300 381,300 381,298 381,302 381,300 385,300 385,298 385,302 385,300 388,300 388,298 388,302 388,300 391,300 391,298 391,302 391,300 395,300 395,298 395,302 395,300 398,300 398,298 398,302 398,300 401,300 401,294 401,306 401,300 405,300 405,298 405,302 405,300 408,300 408,298 408,302 408,300 411,300 411,298 411,302 411,300 415,300 415,298 415,302 415,300 418,300 418,298 418,302 418,300 421,300 421,298 421,302 421,300 425,300 425,298 425,302 425,300 428,300 428,298 428,302 428,300 431,300 431,298 431,302 431,300 435,300 435,294 435,306 435,300 438,300 438,298 438,302 438,300 441,300 441,298 441,302 441,300 445,300 445,298 445,302 445,300 448,300 448,298 448,302 448,300 451,300 451,298 451,302 451,300 455,300 455,298 455,302 455,300 458,300 458,298 458,302 458,300 461,300 461,298 461,302 461,300 465,300 465,298 465,302 465,300 468,300 468,294 468,306 468,300 471,300 471,298 471,302 471,300 475,300 475,298 475,302 475,300 478,300 478,298 478,302 478,300 481,300 481,298 481,302 481,300 485,300 485,298 485,302 485,300 488,300 488,298 488,302 488,300 492,300 492,298 492,302 492,300 495,300 495,298 495,302 495,300 498,300 498,298 498,302 498,300 502,300 502,294 502,306 502,300 505,300 505,298 505,302 505,300 508,300 508,298 508,302 508,300 512,300 512,298 512,302 512,300 515,300 515,298 515,302 515,300 518,300 518,298 518,302 518,300 522,300 522,298 522,302 522,300 525,300 525,298 525,302 525,300 528,300 528,298 528,302 528,300 532,300 532,298 532,302 532,300 535,300 535,294 535,306 535,300 538,300 538,298 538,302 538,300 542,300 542,298 542,302 542,300 545,300 545,298 545,302 545,300 548,300 548,298 548,302 548,300 552,300 552,298 552,302 552,300 555,300 555,298 555,302 555,300 558,300 558,298 558,302 558,300 562,300 562,298 562,302 562,300 565,300 565,298 565,302 565,300 568,300 568,294 568,306 568,300 572,300 572,298 572,302 572,300 575,300 575,298 575,302 575,300 578,300 578,298 578,302 578,300 582,300 582,298 582,302 582,300 585,300 585,298 585,302 585,300 588,300 588,298 588,302 588,300 592,300 592,298 592,302 592,300 595,300 595,298 595,302 595,300 599,300 599,298 599,302 599,300 602,300 602,294 602,306 602,300 605,300 605,298 605,302 605,300 609,300 609,298 609,302 609,300 612,300 612,298 612,302 612,300 615,300 615,298 615,302 615,300 619,300 619,298 619,302 619,300 622,300 622,298 622,302 622,300 625,300 625,298 625,302 625,300 629,300 629,298 629,302 629,300 632,300 632,298 632,302 632,300 635,300 635,294 635,306 635,300 639,300 639,298 639,302 639,300 642,300 642,298 642,302 642,300 645,300 645,298 645,302 645,300 649,300 649,298 649,302 649,300 652,300 652,298 652,302 652,300 655,300 655,298 655,302 655,300 659,300 659,298 659,302 659,300 662,300 662,298 662,302 662,300 665,300 665,298 665,302 665,300 669,300 669,294 669,306 669,300 672,300 672,298 672,302 672,300 675,300 675,298 675,302 675,300 679,300 679,298 679,302 679,300 682,300 682,298 682,302 682,300 685,300 685,298 685,302 685,300 689,300 689,298 689,302 689,300 692,300 692,298 692,302 692,300 695,300 695,298 695,302 695,300 699,300 699,298 699,302 699,300 702,300 702,294 702,306 702,300 706,300 706,298 706,302 706,300 709,300 709,298 709,302 709,300 712,300 712,298 712,302 712,300 716,300 716,298 716,302 716,300 719,300 719,298 719,302 719,300 722,300 722,298 722,302 722,300 726,300 726,298 726,302 726,300 729,300 729,298 729,302 729,300 732,300 732,298 732,302 732,300 736,300 736,294 736,306 736,300 739,300 739,298 739,302 739,300 742,300 742,298 742,302 742,300 746,300 746,298 746,302 746,300 749,300 749,298 749,302 749,300 752,300 752,298 752,302 752,300 756,300 756,298 756,302 756,300 759,300 759,298 759,302 759,300 762,300 762,298 762,302 762,300 766,300 766,298 766,302 766,300 769,300 769,294 769,306 769,300 772,300 772,298 772,302 772,300 776,300 776,298 776,302 776,300 779,300 779,298 779,302 779,300 782,300 782,298 782,302 782,300 786,300 786,298 786,302 786,300 789,300 789,298 789,302 789,300 792,300 792,298 792,302 792,300 796,300 796,298 796,302 796,300 799,300 799,298 799,302 799,300 800,300 " style="fill: none; stroke: black; stroke-width: 0.1" />
+	<rect class="exon" height="50" style="fill: white; stroke: black" width="124" x="338" y="275" />
+	<text class="exon" style="font: 10px Verdana" transform="rotate(-90,342,265)" x="342" y="265">2,354,798 .. 2,358,512</text>
+	<line class="intron" style="fill: white; stroke: black" x1="462" x2="464" y1="300" y2="300" />
+	<rect class="exon" height="50" style="fill: white; stroke: black" width="2" x="464" y="275" />
+	<text class="exon" style="font: 10px Verdana" transform="rotate(-90,468,265)" x="468" y="265">2,358,588 .. 2,358,629</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="149" x2="149" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,4,90)" x="4" y="90">2,344,704</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="285" x2="285" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,153,90)" x="153" y="90">2,349,165</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="342" x2="342" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,289,90)" x="289" y="90">2,353,219</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="397" x2="397" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,346,90)" x="346" y="90">2,354,920</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="533" x2="533" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,401,90)" x="401" y="90">2,356,589</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="567" x2="567" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,537,90)" x="537" y="90">2,360,658</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="617" x2="617" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,571,90)" x="571" y="90">2,361,648</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="691" x2="691" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,621,90)" x="621" y="90">2,363,159</text>
+	<line class="breakpoint" style="fill: white; stroke: black; stroke-width: 0.1" x1="800" x2="800" y1="100" y2="300" />
+	<text class="breakpoint" style="font: 10px Verdana" transform="rotate(-90,695,90)" x="695" y="90">2,365,375</text>
+	<line style="fill: none; stroke: gray; stroke-width: 0.1" x1="0" x2="800" y1="345" y2="345" />
+	<text class="crossover WAG0463703" style="font: 10px Verdana" x="4" y="339">S. peruvianum (1958)</text>
+	<line style="fill: none; stroke: gray; stroke-width: 0.1" x1="0" x2="800" y1="372" y2="372" />
+	<text class="crossover RF_058" style="font: 10px Verdana" x="4" y="366">S. Arcanum</text>
+	<line style="fill: none; stroke: gray; stroke-width: 0.1" x1="0" x2="800" y1="399" y2="399" />
+	<text class="crossover RF_051" style="font: 10px Verdana" x="4" y="393">S. chiemliewskii</text>
+	<line style="fill: none; stroke: gray; stroke-width: 0.1" x1="0" x2="800" y1="426" y2="426" />
+	<text class="crossover RF_104" style="font: 10px Verdana" x="4" y="420">S. galapagense</text>
+	<line style="fill: none; stroke: gray; stroke-width: 0.1" x1="0" x2="800" y1="453" y2="453" />
+	<text class="crossover ITAG2_3" style="font: 10px Verdana" x="4" y="447">S. l. Heinz 1706</text>
+	<line style="fill: none; stroke: rgb(255,0,0)" x1="5" x2="10" y1="480" y2="480" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="485">S. l. var Momatero</text>
+	<line style="fill: none; stroke: rgb(255,217,0)" x1="5" x2="10" y1="495" y2="495" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="500">S. l. var Gardener&apos;s Delight	</text>
+	<line style="fill: none; stroke: rgb(77,255,0)" x1="5" x2="10" y1="510" y2="510" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="515">S. l. var Katinka Cherry</text>
+	<line style="fill: none; stroke: rgb(0,255,140)" x1="5" x2="10" y1="525" y2="525" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="530">S. l. (1891)</text>
+	<line style="fill: none; stroke: rgb(0,153,255)" x1="5" x2="10" y1="540" y2="540" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="545">S. l. (1830)</text>
+	<line style="fill: none; stroke: rgb(64,0,255)" x1="5" x2="10" y1="555" y2="555" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="560">S. l. var Moneymaker</text>
+	<line style="fill: none; stroke: rgb(255,0,230)" x1="5" x2="10" y1="570" y2="570" />
+	<text class="crossover" style="font: 10px Verdana" x="15" y="575">S. l. var Sonato</text>
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="0" x2="149" y1="453" y2="453" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="0" x2="149" y1="453" y2="453" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="0" x2="149" y1="453" y2="453" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="0" x2="149" y1="453" y2="453" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="0" x2="149" y1="453" y2="453" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="0" x2="149" y1="453" y2="453" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="0" x2="149" y1="453" y2="453" />
+	<path class="segment RF_015" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment RF_003" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment RF_007" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment U0015716" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment U0015717" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment RF_001" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment RF_012" d="M149,453 C149,453 149,345 149,345" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="149" x2="285" y1="345" y2="345" />
+	<path class="segment RF_015" d="M285,345 C285,345 285,426 285,426" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="285" x2="342" y1="426" y2="426" />
+	<path class="segment RF_003" d="M285,345 C285,345 285,453 285,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="285" x2="342" y1="453" y2="453" />
+	<path class="segment RF_007" d="M285,345 C285,345 285,453 285,453" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="285" x2="342" y1="453" y2="453" />
+	<path class="segment U0015716" d="M285,345 C285,345 285,453 285,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="285" x2="342" y1="453" y2="453" />
+	<path class="segment U0015717" d="M285,345 C285,345 285,453 285,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="285" x2="342" y1="453" y2="453" />
+	<path class="segment RF_001" d="M285,345 C285,345 285,453 285,453" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="285" x2="342" y1="453" y2="453" />
+	<path class="segment RF_012" d="M285,345 C285,345 285,453 285,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="285" x2="342" y1="453" y2="453" />
+	<path class="segment RF_015" d="M342,426 C342,426 342,399 342,399" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="342" x2="397" y1="399" y2="399" />
+	<path class="segment RF_003" d="M342,453 C342,453 342,453 342,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="342" x2="397" y1="453" y2="453" />
+	<path class="segment RF_007" d="M342,453 C342,453 342,453 342,453" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="342" x2="397" y1="453" y2="453" />
+	<path class="segment U0015716" d="M342,453 C342,453 342,453 342,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="342" x2="397" y1="453" y2="453" />
+	<path class="segment U0015717" d="M342,453 C342,453 342,453 342,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="342" x2="397" y1="453" y2="453" />
+	<path class="segment RF_001" d="M342,453 C342,453 342,453 342,453" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="342" x2="397" y1="453" y2="453" />
+	<path class="segment RF_012" d="M342,453 C342,453 342,453 342,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="342" x2="397" y1="453" y2="453" />
+	<path class="segment RF_015" d="M397,399 C397,399 397,372 397,372" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="397" x2="533" y1="372" y2="372" />
+	<path class="segment RF_003" d="M397,453 C397,453 397,453 397,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="397" x2="533" y1="453" y2="453" />
+	<path class="segment RF_007" d="M397,453 C397,453 397,453 397,453" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="397" x2="533" y1="453" y2="453" />
+	<path class="segment U0015716" d="M397,453 C397,453 397,453 397,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="397" x2="533" y1="453" y2="453" />
+	<path class="segment U0015717" d="M397,453 C397,453 397,453 397,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="397" x2="533" y1="453" y2="453" />
+	<path class="segment RF_001" d="M397,453 C397,453 397,453 397,453" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="397" x2="533" y1="453" y2="453" />
+	<path class="segment RF_012" d="M397,453 C397,453 397,453 397,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="397" x2="533" y1="453" y2="453" />
+	<path class="segment RF_015" d="M533,372 C533,372 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment RF_003" d="M533,453 C533,453 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment RF_007" d="M533,453 C533,453 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment U0015716" d="M533,453 C533,453 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment U0015717" d="M533,453 C533,453 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment RF_001" d="M533,453 C533,453 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment RF_012" d="M533,453 C533,453 533,453 533,453" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="533" x2="567" y1="453" y2="453" />
+	<path class="segment RF_015" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment RF_003" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment RF_007" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment U0015716" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment U0015717" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment RF_001" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment RF_012" d="M567,453 C567,453 567,399 567,399" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="567" x2="617" y1="399" y2="399" />
+	<path class="segment RF_015" d="M617,399 C617,399 617,345 617,345" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="617" x2="691" y1="345" y2="345" />
+	<path class="segment RF_003" d="M617,399 C617,399 617,372 617,372" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="617" x2="691" y1="372" y2="372" />
+	<path class="segment RF_007" d="M617,399 C617,399 617,372 617,372" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="617" x2="691" y1="372" y2="372" />
+	<path class="segment U0015716" d="M617,399 C617,399 617,372 617,372" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="617" x2="691" y1="372" y2="372" />
+	<path class="segment U0015717" d="M617,399 C617,399 617,372 617,372" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="617" x2="691" y1="372" y2="372" />
+	<path class="segment RF_001" d="M617,399 C617,399 617,372 617,372" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="617" x2="691" y1="372" y2="372" />
+	<path class="segment RF_012" d="M617,399 C617,399 617,372 617,372" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="617" x2="691" y1="372" y2="372" />
+	<path class="segment RF_015" d="M691,345 C691,345 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" />
+	<line class="segment RF_015" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,0)" transform="translate(0,0)" x1="691" x2="800" y1="372" y2="372" />
+	<path class="segment RF_003" d="M691,372 C691,372 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" />
+	<line class="segment RF_003" stroke-linecap="round" style="fill: none; stroke: rgb(255,217,0)" transform="translate(1,1)" x1="691" x2="800" y1="372" y2="372" />
+	<path class="segment RF_007" d="M691,372 C691,372 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" />
+	<line class="segment RF_007" stroke-linecap="round" style="fill: none; stroke: rgb(77,255,0)" transform="translate(2,2)" x1="691" x2="800" y1="372" y2="372" />
+	<path class="segment U0015716" d="M691,372 C691,372 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" />
+	<line class="segment U0015716" stroke-linecap="round" style="fill: none; stroke: rgb(0,255,140)" transform="translate(3,3)" x1="691" x2="800" y1="372" y2="372" />
+	<path class="segment U0015717" d="M691,372 C691,372 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" />
+	<line class="segment U0015717" stroke-linecap="round" style="fill: none; stroke: rgb(0,153,255)" transform="translate(4,4)" x1="691" x2="800" y1="372" y2="372" />
+	<path class="segment RF_001" d="M691,372 C691,372 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" />
+	<line class="segment RF_001" stroke-linecap="round" style="fill: none; stroke: rgb(64,0,255)" transform="translate(5,5)" x1="691" x2="800" y1="372" y2="372" />
+	<path class="segment RF_012" d="M691,372 C691,372 691,372 691,372" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" />
+	<line class="segment RF_012" stroke-linecap="round" style="fill: none; stroke: rgb(255,0,230)" transform="translate(6,6)" x1="691" x2="800" y1="372" y2="372" />
+	<polygon class="arrow" points="344,337.5 344,340 334,335 344,330 344,332.5 466,332.5 466,337.5 344,337.5 " style="fill: white; stroke: black" />
+	<rect class="three_prime_UTR" height="50" style="fill: silver; stroke: black" width="4" x="334" y="275" />
+	<text class="three_prime_UTR" style="font: 10px Verdana" transform="rotate(-90,338,265)" x="338" y="265">2,354,703 .. 2,354,798</text>
+	<!-- 
+	Generated using the Perl SVG Module V2.59
+	by Ronan Oger
+	Info: http://www.roitsystems.com/
+ -->
+</svg>
